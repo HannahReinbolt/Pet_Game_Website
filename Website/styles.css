@@ -3,19 +3,44 @@ body {
   margin: 0;
   font-family: 'Cinzel Decorative', cursive;
   /*font-family: Arial, Helvetica, sans-serif;*/
-  background-color: #76CAD6;
   text-align: center;
+  color:black;
+}
+
+body, html{
+    height:100%; 
 }
 
 .main-page {
     font-family: 'Cinzel Decorative', cursive;
 }
 
+.navbar{
+    padding:0;
+    margin:0;
+}
+
+/* MAIN PAGE HERO IMAGE */
+.hero-image {
+    /* The image used */
+    background-image: url("hero-image.jpg");
+
+    /* Set a specific height */
+    height: 100%;
+
+    /* Position and center the image to scale nicely on all screens */
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    position: relative;
+}
+
 /*MAIN PAGE PLAY BUTTON*/
 .main-play-button{
     width: 30%;
     height: 4em;
-    background-color: #e60000;
+    opacity: 0.7;
+    background-color: papayawhip;
     color: black;
     padding-top: 10px;
     margin: 0 auto;
@@ -35,7 +60,7 @@ body {
 }
 
 /*MOBILE SITE - BOOTSTRAP EDITS*/
- @media screen and (max-width: 768px) {
+ @media screen and (max-width: 480px) {
     .col-sm-4 {
       text-align: center;
       margin: 25px 0;
@@ -50,7 +75,7 @@ body {
         font-size: 150px;
     }
 
-    @media (min-width: 768px) {
+    @media (min-width: 480px) {
 .navbar-brand.abs
     {
         position: absolute;
