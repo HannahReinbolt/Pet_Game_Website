@@ -25,6 +25,51 @@ body, html{
     border: 1px solid;
 }
 
+/*LOGIN STYLES*/
+.intro{
+  height:100%
+}
+.col-lg-6{
+    margin:0;
+    padding:0;
+}
+
+.col-sm-12{
+    margin:0;
+    padding:0;
+}
+
+.form-horizontal{
+    margin:0;
+    padding:0;
+}
+
+.left{
+  display : flex;
+  justify-content : center;
+  align-items : center;
+  background-color:#3d231b;
+  height : 100%;
+  color : #FFF;
+
+}
+.right{
+  display : flex;
+  justify-content : center;
+  align-items : center;
+  background-color:#FFF;
+  height : 100%;
+  color : #3d231b;
+}
+@media (max-width: 1200px) { 
+  .left{
+    height:50%
+  }
+  .right{
+    height:50%
+  }
+}
+
 /* MAIN PAGE HERO IMAGE */
 /*See hero-page example here: https://www.w3schools.com/howto/howto_css_hero_image.asp*/
 /*The image was gotten under the free creative commons license from :
