@@ -20,6 +20,11 @@ body, html{
     margin:0;
 }
 
+/*FLAPPY-BIRD GAME STYLES*/
+#canvas {
+    border: 1px solid;
+}
+
 /* MAIN PAGE HERO IMAGE */
 /*See hero-page example here: https://www.w3schools.com/howto/howto_css_hero_image.asp*/
 /*The image was gotten under the free creative commons license from :
