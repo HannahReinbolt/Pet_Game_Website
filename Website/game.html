@@ -19,24 +19,7 @@
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
   <!-- Latest compiled JavaScript -->
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-
-  <!--Link to Flappy Bird JS file-->
-  <script src="game-sprite.js"></script>
-
-	<style>
-	canvas {
-		display: block;
-		position: absolute;
-		margin: auto;
-		top: 0;
-		bottom: 0;
-		left: 0;
-		right: 0;
-	}
-	</style>
 </head>
-
-
 
 <body>
 <!--NAVBAR-->
@@ -84,222 +67,541 @@
   <h2>FlappyBird Game here:</h2>
   <p>Some content..</p>
 </div>
+<!--This is where the game is displayed-->
+<canvas id="canvas" width="640" height="480"></canvas>
 
 <!--Javascript for Flappy Bird game-->
-<!--Tutorial found here: https://www.youtube.com/watch?v=riUx2G75mas-->
+<!--Tutorial found here: https://github.com/giotiskl/Canvas-Bird-->
+<!--Original mechanics are under a Creative Commons Lisence -->
 <script>
 
-var
-canvas,
-ctx,
-width,
-height,
+(function() {
+    //Get canvas and context
+    var c   = document.getElementById('canvas'),
+        ctx = c.getContext('2d');
 
-frames = 0,
-score = 0,
-best = 0,
+    //Load assets
+    var bgImg = loadImage('https://raw.githubusercontent.com/giotiskl/Canvas-Bird/master/assets/background.jpg', 640, 480),
+        playerImg = loadImage('https://raw.githubusercontent.com/giotiskl/Canvas-Bird/master/assets/player.png', 192, 64),
+        enemyUpImg = loadImage('https://raw.githubusercontent.com/giotiskl/Canvas-Bird/master/assets/enemy_up.png', 64, 316),
+        enemyDownImg = loadImage('https://raw.githubusercontent.com/giotiskl/Canvas-Bird/master/assets/enemy_down.png', 64, 316);
 
-currentstate,
-states = {
-  Splash: 0, Game: 1, Score: 2
-},
+    var pointAudio = new Audio('https://raw.githubusercontent.com/giotiskl/Canvas-Bird/master/assets/point.mp3'),
+        loseAudio = new Audio('https://raw.githubusercontent.com/giotiskl/Canvas-Bird/master/assets/lose.mp3');
 
-bird = {
-  x: 80,
-  y: 0,
-  frame: 0,
-  animation: [0, 1, 2, 1],
-  rotation: 0,
-  gravity: 0.25,
-  _jump: 4.6, 
+    //Helper methods
+    function loadImage(src, width, height) {
+        var img = new Image(width, height);
+        img.src = src;
+        return img;
+    }
 
-  _jump: function(){
-    this.velocity = -this._jump;
-  },
+    function randomIntFromInterval(min,max) {
+        return Math.floor(Math.random()*(max-min+1)+min);
+    }
 
-  update: function(){
-    var n = currentstate === states.Splash ? 10 : 5;
-    this.frame += frames % n === 0 ? 1 : 0;
-    this.frame %= this.animation.length;
+    var textAlpha = (function() {
+        var alpha = 1,
+            shouldIncrease = false;
+        return {
+            fluctuate: function() {
+                if (alpha < 0) shouldIncrease = true;
+                if (alpha > 1) shouldIncrease = false;
 
-    if(currentstate === states.Splash){
-      this.y = height - 280 + 5*Math.cos(frames/10);
-      this.rotation = 0;
-    } else{
-      this.velocity += this.gravity;
-      this.y += this.velocity;
+                if (shouldIncrease) alpha += 0.02;
+                else alpha -= 0.02;
 
-      if(this.y >= height - s_fg.height-10){
-        this.y = height - s_fg.height-10;
-        if (currentstate === states.Game){
-          currentstate = states.Score;
+                return alpha;
+            },
+            get: function() {
+                return alpha;
+            }
+        };
+    })();
+
+    //Game constants
+    var PLAYER_CONTROLS_ON = false;
+    var GAME_PLAYING = false;
+
+    //Classes & objects
+    //******* Score counter object **********//
+    var scoreCounter = {
+        //state
+        _score: 0,
+        //methods
+        increaseScore: function() {
+            this._score++;
+            pointAudio.play();
+        },
+        getScore: function() {
+            return this._score;
+        },
+        reset: function() {
+            this._score = 0;
         }
-        this.velocity = this._jump;
-      }
+    };
 
-      if(this.velocity >= this._jump){
-        this.frame = 1;
-        this.rotation = Math.min(Math.PI/2, this.rotation + 0.3);
-      }else{
-        this.rotation = -0.3;
-      }
+    //******* Background Constructor **********//
+    function Background(x, y, speed, img) {
+        this.x = x || 0;
+        this.y = y || 0;
+        this.img   = img || bgImg;
+        this.speed = speed || 1;
     }
-  },
-  draw: function(ctx){
-    ctx.save();
-    ctx.translate(this.x, this.y);
-    ctx.rotate(this.rotation);
-
-    var n = this.animation[this.frame];
-    s_bird[n].draw(ctx, -s_bird[n].width/2, -s_bird[n].height/2);
-    ctx.restore();
-  }
-},
-
-pipes = {
-  _pipes: [],
-
-  reset: function(){
-    this._pipes = [];
-  },
-
-  update: function(){
-    if(frames % 100 == 0){
-      var _y = height - (s_pipeSouth.height+s_fg.height+120+200+Math.random());
-      this._pipes.push({
-        x: 500,
-        y: _y,
-        width: s_pipeSouth.width,
-        height: s_pipeSouth.height
-      });
-    }
-    for (var i = 0, len = this._pipes.length; i < len; i++){
-      var p = this._pipes[i];
-
-      if (i == 0){
-        var cx = Math.min(Math.max(bird.x, p.x), p.x+p.width);
-        var cy1 = Math.min(Math.max(bird.y, p.y), p.y+p.height);
-        var cy2 = Math.min(Math.max(bird.y, p.y+p.height+80), p.y+2*p.height+80);
-
-        var dx = bird.x - cx;
-        var dy1 = bird.y - cy1;
-        var dy2 = bird.y - cy2;
-
-        var d1 = dx*dx + dy1*dy1;
-        var d2 = dx*dx + dy2*dy2;
-
-        var r = bird.radius*bird.radius;
-
-        if (r > d1 || r > d2){
-          currentstate = states.Score;
+    Background.prototype = {
+        move: function() {
+            this.x -= this.speed;
+            if (this.x <= -this.img.width) {
+                this.x = c.width;
+            }
         }
-      }
+    };
 
-      p.x -= 2;
-      if(p.x < -50){
-        this._pipes.splice(i, 1);
-        i--;
-        len--;
-      }
+    //******* Player Object **********//
+    //fps locking vars
+    var fpsCounter = Date.now(), //custom timer to restrict fps
+        fps = 30;
+    //free falling counter
+    var fallingCounter = Date.now();
+    //Player
+        player = {
+        //private state
+        _currentFrame: 0,
+
+       //public properties
+        //physics
+        velocity: 3,
+        force: 0.25,
+        //positional
+        x: 70,
+        y: 20,
+        width: 64,
+        height: 64,
+
+        //methods
+        jump: function() {
+            this.velocity = -4.6;
+        },
+        fall: function() {
+            var now = Date.now();
+            if (now - fallingCounter > 1000 / fps) {
+                if (this.velocity < 5) this.velocity += this.force;
+                this.y += this.velocity;
+            }
+        },
+        hasCollided: function() {
+            var hasCollided = false;
+
+            var playerX  = this.x + this.width,
+                playerTopY    = this.y,
+                playerBottomY = this.y + this.height;
+
+            var enemyX = enemies[nextEnemyId].enemyDown.x + 40,
+                enemyLookingDownY = enemies[nextEnemyId].enemyDown.y + enemies[nextEnemyId].enemyDown.img.height,
+                enemyLookingUpY = enemies[nextEnemyId].enemyUp.y,
+                enemyWidth = enemies[nextEnemyId].enemyDown.img.width;
+
+            //when the enemy is inside an obstacle
+            if (playerX > enemyX && playerX < enemyX + enemyWidth - 40) {
+                //check for collision and tag player as collided if they hit an obstacle
+                if (playerTopY < enemyLookingDownY || playerBottomY > enemyLookingUpY)
+                    hasCollided = true;
+            }
+
+            //if the player goes above/below screen tag as collided
+            if (playerBottomY < 0 || playerTopY > c.height) {
+                hasCollided = true;
+            }
+
+            if (hasCollided & PLAYER_CONTROLS_ON) loseAudio.play();
+
+            //return collision result
+            return hasCollided;
+        },
+        reset: function() {
+            this.velocity = 2;
+            this.y = 20;
+        },
+        getNextFrame: function() {
+            var now = Date.now();
+            if (now - fpsCounter > 1000 / fps) {
+                fpsCounter = now;
+                this._currentFrame++;
+                if (this._currentFrame > 2) this._currentFrame = 0;
+            }
+            return this._currentFrame;
+        }
+    };
+
+    //******* Enemy Constructor **********//
+    //constants
+    var ENEMY_NUMBER = 5,     //how many sets of enemies
+        ENEMY_OFFSET = 300,   //horizontal distance between obstacles
+        ENEMY_DISTANCE = 120, //vertical opening between obstacles
+        MAX_YOFFSET = 50,
+        MIN_YOFFSET = -150;
+    //Enemy IDs
+    var nextEnemyId, lastEnemyId; // defined in setupEnemies()
+
+    function Enemy(id, y, yOffset, imgDirectionIsUp, speed, img) {
+        if (typeof id === 'undefined') throw new Error('Parameter ID must be defined');
+        this.id = id;
+        this.imgDirectionIsUp = typeof imgDirectionIsUp === 'undefined' ? true : imgDirectionIsUp;
+        this.yOffset = yOffset || 0;
+
+        this.x = c.width + id * ENEMY_OFFSET || 0;
+        if
+            (this.imgDirectionIsUp) this.y = y + ENEMY_DISTANCE + this.yOffset || 0;
+        else
+            this.y = y - ENEMY_DISTANCE + this.yOffset || 0;
+
+        this.speed = speed || 3;
+        this.img = img || (this.imgDirectionIsUp ? enemyUpImg : enemyDownImg);
     }
-  },
-  draw: function(ctx){
-    for(var i = 0, len = this._pipes.length; i < len; i++){
-      var p = this._pipes[i];
-      s_pipeSouth.draw(ctx, p.x, p.y);
-      s_pipeNorth.draw(ctx, p.x, p.y+80+p.height);
+    Enemy.prototype = {
+        move: function() {
+            this.x -= this.speed;
+            if (this.x <= -this.img.width && this.imgDirectionIsUp) {
+                //Set x of this enemy set to next enemy set + enemy offset
+                this.x = enemies[this.id].enemyDown.x = enemies[lastEnemyId].enemyUp.x + ENEMY_OFFSET;
+                //Set new random Y
+                this.yOffset = enemies[this.id].enemyDown.yOffset = randomIntFromInterval(MIN_YOFFSET, MAX_YOFFSET);
+                //Update last enemy ID
+                lastEnemyId = lastEnemyId === ENEMY_NUMBER - 1 ? 0 : lastEnemyId + 1;
+            }
+            if (this.id === nextEnemyId && this.x + this.img.width < player.x + player.width) {
+                //Update next enemy ID
+                nextEnemyId = nextEnemyId === ENEMY_NUMBER - 1 ? 0 : nextEnemyId + 1;
+                //Increase the score
+                if (PLAYER_CONTROLS_ON) scoreCounter.increaseScore();
+            }
+        }
+    };
+
+    //Main functions
+    var updateLoop;
+    function update() {
+        draw();
+        updateLoop = window.requestAnimationFrame(update);
     }
-  }
-};
 
-function onpress(evt){
+    function draw() {
+        //Set font style
+        ctx.font = '48px Raleway';
+        //Clean canvas
+        ctx.clearRect(0, 0, c.width, c.height);
+        //Draw next frame with props
+        drawBackground();
+        //If game hasn't started or player lost show splash screen text
+        if (!GAME_PLAYING) {
+            ctx.strokeStyle = 'rgba(0,0,0,' + textAlpha.get() + ')';
+            ctx.strokeText('Tap to Start', c.width / 2 - 120, 80);
+            ctx.fillStyle = 'rgba(255,255,255,' + textAlpha.get() + ')';
+            ctx.fillText('Tap to Start', c.width / 2 - 120, 80);
+            textAlpha.fluctuate();
+        }
+        //If game is playing draw everything
+        else {
+            drawEnemies();
+            drawPlayer();
+            //Draw the score
+            ctx.fillStyle = 'black';
+            ctx.strokeText(scoreCounter.getScore(), c.width / 2 - 11, 51);
+            ctx.fillStyle = 'white';
+            ctx.fillText(scoreCounter.getScore(), c.width / 2 - 10, 50);
+        }
+    }
 
-  switch (currentstate){
-    case states.Splash:
-      currentstate = states.Game;
-      bird.jump();
-      break;
+    //Instantiate, draw and animate backgrounds
+    var bg1 = new Background(0, 0);
+    var bg2 = new Background(c.width, 0);
 
-    case states.Game:
-      bird.jump();
-      break;
+    function drawBackground() {
+        ctx.drawImage(bg1.img, bg1.x, bg1.y);
+        ctx.drawImage(bg2.img, bg2.x, bg2.y);
+        bg1.move();
+        bg2.move();
+    }
 
-    case states.Score:
-      break;
-  }
-}
+    //Instantiate and draw player
+    function drawPlayer() {
+        //render player
+        ctx.drawImage(playerImg, player.getNextFrame() * player.width, 0, //crop start
+                      player.width, player.height, //crop end
+                      player.x, player.y, //player pos
+                      player.width, player.height); //player sprite size
+        //move player
+        player.fall();
+        //collision check
+        if (player.hasCollided()) {
+            //deactivate player controls
+            PLAYER_CONTROLS_ON = false;
+            //when player falls of screen stop game
+            if (player.y - player.height > c.height) GAME_PLAYING = false;
+        }
+    }
 
-function main(){
-  canvas = document.createElement("canvas");
+    //Set up initial enemy positions before rendering them
+    var enemies = [];
+    function setupEnemies() {
+        nextEnemyId = 0;
+        lastEnemyId = ENEMY_NUMBER - 1; //used to reposition enemies
 
-  width = window.innerWidth;
-  height = window.innerHeight;
+        for (var i = 0; i < ENEMY_NUMBER; i++) {
+            var yOffset = randomIntFromInterval(MIN_YOFFSET, MAX_YOFFSET);
+            var enemySet = {
+                enemyUp: new Enemy(i, c.height / 2, yOffset),
+                enemyDown: new Enemy(i, 0, yOffset, false)
+            };
+            enemies[i] = enemySet;
+        }
+    }
 
-  var evt = "touchstart";
-  if(width >= 500){
-    width = 320;
-    height = 480;
-    canvas.style.border = "1px solid #000";
-    evt = "mousedown";
-  }
+    //Instantiate and draw enemies
+    function drawEnemies() {
+        for (var i = 0; i < enemies.length; i++) {
+            ctx.drawImage(enemies[i].enemyUp.img, enemies[i].enemyUp.x, enemies[i].enemyUp.y);
+            ctx.drawImage(enemies[i].enemyDown.img, enemies[i].enemyDown.x, enemies[i].enemyDown.y);
+            enemies[i].enemyUp.move();
+            enemies[i].enemyDown.move();
+        }
+    }
 
-  document.addEventListener(evt, onpress);
+    //Reset game function
+    function resetGame() {
+        scoreCounter.reset();
+        player.reset();
+        setupEnemies();
+    }
 
-  canvas.width = width;
-  canvas.height = height;
-  ctx = canvas.getContext("2d");
+    //Register event handlers & kick off the game
+    window.onload = function() {
+        c.addEventListener('click', function() {
+            if (PLAYER_CONTROLS_ON) {
+                player.jump();
+            }
+            if (!GAME_PLAYING) {
+                resetGame();
+                GAME_PLAYING = true;
+                PLAYER_CONTROLS_ON = true;
+            }
+        });
 
-  currentstate = states.Splash;
+        update();
+    };
+})();
 
-  document.body.appendChild(canvas);
-  var img = new Image();
-  img.onload = function(){
-    initSprites(this);
-    ctx.fillStyle = s_bg.color;
-    run();
-  }
-  img.src = "sheet.png";
-}
+// var
+// canvas,
+// ctx,
+// width,
+// height,
 
-function run(){
-  var loop = function(){
-    update();
-    render();
-    window.requestAnimationFrame(loop, canvas);
-  }
-  window.requestAnimationFrame(loop, canvas);
-}
+// frames = 0,
+// score = 0,
+// best = 0,
 
-function update(){
-  frames++;
-  if(currentstate !== states.Score){
-    fgpos = (fgpos - 2) % 14;
-  }
-  if (currentstate === states.Game){
-    pipes.update();
-  }
-  bird.update();
-}
+// currentstate,
+// states = {
+//   Splash: 0, Game: 1, Score: 2
+// },
 
-function render(){
-  ctx.fillRect(0, 0, width, height);
+// bird = {
+//   x: 80,
+//   y: 0,
+//   frame: 0,
+//   animation: [0, 1, 2, 1],
+//   rotation: 0,
+//   gravity: 0.25,
+//   _jump: 4.6, 
 
-  s_bg.draw(ctx, 0, height - s_bg.height);
-  s_bg.draw(ctx, s_bg.width, height - s_bg.height);
+//   _jump: function(){
+//     this.velocity = -this._jump;
+//   },
 
-  pipes.draw(ctx);
-  bird.draw(ctx);
+//   update: function(){
+//     var n = currentstate === states.Splash ? 10 : 5;
+//     this.frame += frames % n === 0 ? 1 : 0;
+//     this.frame %= this.animation.length;
 
-  s_fg.draw(ctx, fgpos, height - s_fg.height);
-  s_fg.draw(ctx, fgpos+s_fg.width, height - s_fg.height);
+//     if(currentstate === states.Splash){
+//       this.y = height - 280 + 5*Math.cos(frames/10);
+//       this.rotation = 0;
+//     } else{
+//       this.velocity += this.gravity;
+//       this.y += this.velocity;
 
-  var width2 = width/2;
+//       if(this.y >= height - s_fg.height-10){
+//         this.y = height - s_fg.height-10;
+//         if (currentstate === states.Game){
+//           currentstate = states.Score;
+//         }
+//         this.velocity = this._jump;
+//       }
 
-  if(currentstate === states.Splash){
-    s_splash.draw(ctx, width2 - s_splash.width/2, height - 300);
-    s_text.GetReady.draw(ctx, width2 - s_text.GetReady.width/2, height - 380);
-  }
-}
+//       if(this.velocity >= this._jump){
+//         this.frame = 1;
+//         this.rotation = Math.min(Math.PI/2, this.rotation + 0.3);
+//       }else{
+//         this.rotation = -0.3;
+//       }
+//     }
+//   },
+//   draw: function(ctx){
+//     ctx.save();
+//     ctx.translate(this.x, this.y);
+//     ctx.rotate(this.rotation);
+
+//     var n = this.animation[this.frame];
+//     s_bird[n].draw(ctx, -s_bird[n].width/2, -s_bird[n].height/2);
+//     ctx.restore();
+//   }
+// },
+
+// pipes = {
+//   _pipes: [],
+
+//   reset: function(){
+//     this._pipes = [];
+//   },
+
+//   update: function(){
+//     if(frames % 100 == 0){
+//       var _y = height - (s_pipeSouth.height+s_fg.height+120+200+Math.random());
+//       this._pipes.push({
+//         x: 500,
+//         y: _y,
+//         width: s_pipeSouth.width,
+//         height: s_pipeSouth.height
+//       });
+//     }
+//     for (var i = 0, len = this._pipes.length; i < len; i++){
+//       var p = this._pipes[i];
+
+//       if (i == 0){
+//         var cx = Math.min(Math.max(bird.x, p.x), p.x+p.width);
+//         var cy1 = Math.min(Math.max(bird.y, p.y), p.y+p.height);
+//         var cy2 = Math.min(Math.max(bird.y, p.y+p.height+80), p.y+2*p.height+80);
+
+//         var dx = bird.x - cx;
+//         var dy1 = bird.y - cy1;
+//         var dy2 = bird.y - cy2;
+
+//         var d1 = dx*dx + dy1*dy1;
+//         var d2 = dx*dx + dy2*dy2;
+
+//         var r = bird.radius*bird.radius;
+
+//         if (r > d1 || r > d2){
+//           currentstate = states.Score;
+//         }
+//       }
+
+//       p.x -= 2;
+//       if(p.x < -50){
+//         this._pipes.splice(i, 1);
+//         i--;
+//         len--;
+//       }
+//     }
+//   },
+//   draw: function(ctx){
+//     for(var i = 0, len = this._pipes.length; i < len; i++){
+//       var p = this._pipes[i];
+//       s_pipeSouth.draw(ctx, p.x, p.y);
+//       s_pipeNorth.draw(ctx, p.x, p.y+80+p.height);
+//     }
+//   }
+// };
+
+// function onpress(evt){
+
+//   switch (currentstate){
+//     case states.Splash:
+//       currentstate = states.Game;
+//       bird.jump();
+//       break;
+
+//     case states.Game:
+//       bird.jump();
+//       break;
+
+//     case states.Score:
+//       break;
+//   }
+// }
+
+// function main(){
+//   canvas = document.createElement("canvas");
+
+//   width = window.innerWidth;
+//   height = window.innerHeight;
+
+//   var evt = "touchstart";
+//   if(width >= 500){
+//     width = 320;
+//     height = 480;
+//     canvas.style.border = "1px solid #000";
+//     evt = "mousedown";
+//   }
+
+//   document.addEventListener(evt, onpress);
+
+//   canvas.width = width;
+//   canvas.height = height;
+//   ctx = canvas.getContext("2d");
+
+//   currentstate = states.Splash;
+
+//   document.body.appendChild(canvas);
+//   var img = new Image();
+//   img.onload = function(){
+//     initSprites(this);
+//     ctx.fillStyle = s_bg.color;
+//     run();
+//   }
+//   img.src = "sheet.png";
+// }
+
+// function run(){
+//   var loop = function(){
+//     update();
+//     render();
+//     window.requestAnimationFrame(loop, canvas);
+//   }
+//   window.requestAnimationFrame(loop, canvas);
+// }
+
+// function update(){
+//   frames++;
+//   if(currentstate !== states.Score){
+//     fgpos = (fgpos - 2) % 14;
+//   }
+//   if (currentstate === states.Game){
+//     pipes.update();
+//   }
+//   bird.update();
+// }
+
+// function render(){
+//   ctx.fillRect(0, 0, width, height);
+
+//   s_bg.draw(ctx, 0, height - s_bg.height);
+//   s_bg.draw(ctx, s_bg.width, height - s_bg.height);
+
+//   pipes.draw(ctx);
+//   bird.draw(ctx);
+
+//   s_fg.draw(ctx, fgpos, height - s_fg.height);
+//   s_fg.draw(ctx, fgpos+s_fg.width, height - s_fg.height);
+
+//   var width2 = width/2;
+
+//   if(currentstate === states.Splash){
+//     s_splash.draw(ctx, width2 - s_splash.width/2, height - 300);
+//     s_text.GetReady.draw(ctx, width2 - s_text.GetReady.width/2, height - 380);
+//   }
+// }
 
 </script>
 
