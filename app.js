@@ -33,6 +33,11 @@ io.on("connection",
 			      {
 		            console.log("Goodbye!");
 			      });
+		socket.on('chatin',function(msg)
+							{
+								console.log(msg);
+								io.emit('chat',msg);
+							});
 	  });
 
 // Port and IP address

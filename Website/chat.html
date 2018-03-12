@@ -59,10 +59,31 @@
     </div><!-- /.navbar-collapse -->
   </div><!-- /.container-fluid -->
 </nav>
-
+<script src="/socket.io/socket.io.js"></script>
 <div style="padding-left:16px">
-  <h2>Top Navigation Example</h2>
-  <p>Some content..</p>
+  <h2>Global Chat</h2>
+  <textarea id="chatbox" rows="20" cols="75" readonly></textarea>
+  
+  <textarea id="input" rows="1" cols="50" placeholder="say something nice"></textarea>
+  
+  <button id="submit" type="button">Submit</button>
+  <script>
+  var socket= io();
+  var button= document.getElementById('submit');
+  button.onclick=function()
+					{
+						var message = {"username" : "user1",
+									   "body"  : document.getElementById('input').value};
+						document.getElementById('input').value = "";
+						socket.emit('chatin', JSON.stringify(message));
+					};
+  socket.on('chat',function(msg)
+						{
+							var chatbox = document.getElementById('chatbox');
+							var message = JSON.parse(msg);
+							chatbox.value = chatbox.value+"\n"+message.username + ": " + message.body;
+						});
+  </script>
 </div>
 
 </body>
