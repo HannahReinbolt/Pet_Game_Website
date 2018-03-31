@@ -9,6 +9,7 @@ if %mode%==help (
 	echo 	build 	 :  same as create + load - loads both dbSchema.sql and dbPreload.sql
 	echo		destroy  :  drop existing database dbName
 	echo 	help 	 :  display this help section
+	echo Make sure to launch apache and mysql in XAMPP before using this tool! :P
 	exit /B)
 	
 set dbname=%2
