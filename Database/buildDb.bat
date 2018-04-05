@@ -15,12 +15,12 @@ if %mode%==help (
 set dbname=%2
 set mysql="C:\xampp\mysql\bin\mysql.exe"
 
-if %mode%==destroy (%mysql% -u root  -e "drop database %dbname%")
+if %mode%==destroy (%mysql% -u root -e "drop database %dbname%")
 if %mode%==create (
 	%mysql% -u root -e "create database %dbname%"
 	%mysql% -u root %dbname% < dbSchema.sql)
 if %mode%==load (%mysql% -u root %dbname% < dbPreload.sql)
 if %mode%==build (
 	%mysql% -u root -e "create database %dbname%"
-	%mysql% -u root %dbname% < Database\dbSchema.sql
-	%mysql% -u root %dbname% < Database\dbPreload.sql)
+	%mysql% -u root %dbname% < dbSchema.sql
+	%mysql% -u root %dbname% < dbPreload.sql)
