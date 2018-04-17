@@ -35,7 +35,6 @@ io.on("connection",
 			      });
 		socket.on('chatin',function(msg)
 							{
-								console.log(msg);
 								io.emit('chat',msg);
 							});
 	  });

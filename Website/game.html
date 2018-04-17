@@ -82,7 +82,7 @@
 
     //Load assets
     var bgImg = loadImage('https://raw.githubusercontent.com/giotiskl/Canvas-Bird/master/assets/background.jpg', 640, 480),
-        playerImg = loadImage('https://raw.githubusercontent.com/giotiskl/Canvas-Bird/master/assets/player.png', 192, 64),
+        playerImg = loadImage('http://localhost:8081/Sprites/kitty.png', 64, 64),
         enemyUpImg = loadImage('https://raw.githubusercontent.com/giotiskl/Canvas-Bird/master/assets/enemy_up.png', 64, 316),
         enemyDownImg = loadImage('https://raw.githubusercontent.com/giotiskl/Canvas-Bird/master/assets/enemy_down.png', 64, 316);
 
@@ -160,7 +160,7 @@
     //******* Player Object **********//
     //fps locking vars
     var fpsCounter = Date.now(), //custom timer to restrict fps
-        fps = 30;
+        fps = 60;
     //free falling counter
     var fallingCounter = Date.now();
     //Player
@@ -226,8 +226,8 @@
             var now = Date.now();
             if (now - fpsCounter > 1000 / fps) {
                 fpsCounter = now;
-                this._currentFrame++;
-                if (this._currentFrame > 2) this._currentFrame = 0;
+                //this._currentFrame++;
+                //if (this._currentFrame > 2) this._currentFrame = 0;
             }
             return this._currentFrame;
         }
