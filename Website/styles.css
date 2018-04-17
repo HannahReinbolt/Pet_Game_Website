@@ -1,7 +1,7 @@
 /*MAIN PAGE STYLES*/
 body {
   margin: 0;
-  font-family: 'Cinzel Decorative', cursive;
+  font-family: 'Press Start 2P', cursive;
   /*font-family: Arial, Helvetica, sans-serif;*/
   text-align: center;
   color:black;
@@ -9,15 +9,17 @@ body {
 
 body, html{
     height:100%; 
+    background-image: url("tileback.jpg");
 }
 
 .main-page {
-    font-family: 'Cinzel Decorative', cursive;
+    font-family: 'Press Start 2P', cursive;
 }
 
 .navbar{
     padding:0;
     margin:0;
+    font-size: 0.75em;
 }
 textarea{
     font-family: Cambria, Cochin, Georgia, Times, Times New Roman, serif;
@@ -31,18 +33,7 @@ canvas{
 .loginform {
   background: #fff;
   font-family: Cambria, Cochin, Georgia, Times, Times New Roman, serif;
-
-  background-image: url("login1.png");
-    /* Set a specific height */
-    height: 100%;
-
-    /* Position and center the image to scale nicely on all screens */
-    background-size: cover;
-    position: relative;
-  -webkit-background-size: cover;
-  -moz-background-size: cover;
-  -o-background-size: cover;
-  background-size: cover;
+  background-image: url("tileback.jpg");
 }
   input {
     display: block;
@@ -58,29 +49,11 @@ canvas{
   }
 
 /*CHAT PAGE STYLES*/
-.chatpage{
-    background-image: url("green_leaves.png");
-    /* Set a specific height */
-    height: 100%;
-
-    /* Position and center the image to scale nicely on all screens */
-    background-position: center;
-    background-repeat: no-repeat;
-    background-size: cover;
-    position: relative;
-}
 
 /*GAME PAGE STYLES*/
 .gamepage{
-    background-image: url("game2.png");
-    /* Set a specific height */
-    height: 100%;
-
-    /* Position and center the image to scale nicely on all screens */
-    background-position: center;
-    background-repeat: no-repeat;
-    background-size: cover;
-    position: relative;
+    background-image: url("tileback.jpg");
+    
 }
 
 /* MAIN PAGE HERO IMAGE */
@@ -90,21 +63,27 @@ canvas{
     Free for commercial use 
     No attribution required
 */
-.hero-image {
-    /* The image used */
-    background-image: url("hero-image.jpg");
 
-    /* Set a specific height */
-    height: 100%;
-
-    /* Position and center the image to scale nicely on all screens */
-    background-position: center;
-    background-repeat: no-repeat;
-    background-size: cover;
-    position: relative;
+/*MAIN PAGE*/
+.centered {
+    position: absolute;
+    padding-top: 3em;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
 }
 
-/*MAIN PAGE PLAY BUTTON*/
+/* Container holding the image and the text */
+.container {
+    position: relative;
+    text-align: center;
+    background-color: white;
+    opacity: 0.9;
+    border-radius: 30px;
+    padding-bottom: 2em;
+    padding-top: 2em;
+}
+
 .main-play-button{
     width: 30%;
     height: 4em;
