@@ -30,3 +30,34 @@ create table ADMIN(
 	Username varchar(255) references USER.Username,
 	Password varchar(255) references USER.Password,
 	primary key (Username, Password));
+	
+create table BAN(
+	Username varchar(255) references USER.Username,
+	Password varchar(255) references USER.Password,
+	expiration_date date;
+	primary key (Username, Password));
+	
+create table BAN2(
+	Username varchar(255) references USER.Username,
+	Password varchar(255) references USER.Password,
+	reason varchar(255);
+	primary key (Username, Password, reason));
+	
+create table BUY_PET(
+	Username varchar(255) references USER.Username,
+	Password varchar(255) references USER.Password,
+	Pet_ID   varchar(255) references PET.ID;
+	primary key (Username, Password, Pet_ID));
+	
+create table BUY_COS(
+	Username varchar(255) references USER.Username,
+	Password varchar(255) references USER.Password,
+	Cos_ID   varchar(255) references COSMETIC.ID;
+	primary key (Username, Password, Cos_ID));
+	
+create table PET(
+	ID       varchar(255),
+	name     varchar(255) not null default "pet_name"
+	cost     int not null default 0,
+	sprite   varchar(255), /* filepath to picture */
+	primary key (ID));
