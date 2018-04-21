@@ -61,3 +61,26 @@ create table PET(
 	cost     int not null default 0,
 	sprite   varchar(255), /* filepath to picture */
 	primary key (ID));
+
+create table COSMETIC(
+	ID varchar(255),
+	name varchar(255),
+	cost int not null,
+	sprite varchar(255),
+	primary key (ID));
+
+create table WEAR(
+	Pet_ID varchar(255) references PET.ID,
+	Cost_ID varchar(255) references COSMETIC.ID,
+	primary key (Pet_ID, Cost_ID));
+
+create table ACHIEVEMENT(
+	Name varchar(255),
+	Pet_ID varchar(255) references PET.ID,
+	reward int not null,
+	primary key (Name, Pet_ID));
+
+create table AWARD(
+	Name varchar(255) references ACHIEVEMENT.Name,
+	Pet_ID varchar(255) references ACHIEVEMENT.Pet_ID,
+	primary key (Name, Pet_ID));
