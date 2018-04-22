@@ -1,4 +1,4 @@
-rem echo off
+echo off
 set mode=%1
 
 if %mode%==help (
