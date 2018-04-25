@@ -4,6 +4,7 @@
   "description": "Flappy bird knockoff + chat + pets and cosmetics",
   "dependencies": {
     "express": "^4.16.2",
+    "npm": "^6.0.0",
     "package.json": "^2.0.1",
     "socketio": "^1.0.0"
   }

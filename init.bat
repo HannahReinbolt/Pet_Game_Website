@@ -14,17 +14,22 @@ if not exist C:\xampp (
 	exit /B)
 	
 echo Invoking apache and mysql services
-C:\xampp\apache_start.bat
-C:\xampp\mysql_start.bat
+start "apache" C:\xampp\apache_start.bat
+start "mysql" C:\xampp\mysql_start.bat
+
+timeout /t 15 /nobreak
 
 echo Building database
 cd Database
-buildDb.bat build petDB
+call buildDb.bat destroy petDB
+call buildDb.bat build petDB
 cd ..
 
+echo Installing nodeJS modules
+call npm install
 echo Invoking local server
-npm install package.json
-start "Local Server" node app.js
+start "LocalServer" node app.js
 
 echo Launching default browser
-explorer localhost:8081
+explorer http:\\localhost:8081
+echo Please terminate the processes "LocalServer", "apache", and "mysql" - using the red X button will suffice
