@@ -82,7 +82,8 @@
 
     //Load assets
     var bgImg = loadImage('https://raw.githubusercontent.com/giotiskl/Canvas-Bird/master/assets/background.jpg', 640, 480),
-        playerImg = loadImage('http://localhost:8081/Sprites/kitty.png', 64, 64),
+        playerImg = loadImage('http://localhost:8081/Sprites/snek.png', 64, 64),
+		accessoryImg = loadImage('http://localhost:8081/Sprites/cowboi.png', 128, 128),
         enemyUpImg = loadImage('https://raw.githubusercontent.com/giotiskl/Canvas-Bird/master/assets/enemy_up.png', 64, 316),
         enemyDownImg = loadImage('https://raw.githubusercontent.com/giotiskl/Canvas-Bird/master/assets/enemy_down.png', 64, 316);
 
@@ -330,6 +331,11 @@
                       player.width, player.height, //crop end
                       player.x, player.y, //player pos
                       player.width, player.height); //player sprite size
+		//render accessory
+        ctx.drawImage(accessoryImg, player.getNextFrame() * player.width, 0, //crop start
+                      128, 128, //crop end
+                      player.x-32, player.y-32, //player pos
+                      128, 128); //player sprite size
         //move player
         player.fall();
         //collision check

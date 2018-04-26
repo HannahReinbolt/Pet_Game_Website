@@ -67,8 +67,8 @@
           <form>
             <input type="text" title="username" placeholder="username" /><br />
             <input type="password" title="username" placeholder="password" /><br />
-            <button type="submit" class="btn">Login</button><br />
-            <a class="forgot" href="#">Forgot Password?</a><br />
+            <button id="login" type="submit" class="btn">Login</button><br />
+            <a id='forgot' class="forgot" href="http://localhost:8081/password_change.html">Forgot Password?</a><br />
           </form>
           </div>
           </div>
@@ -86,10 +86,25 @@
               <input type="text" title="username" placeholder="username" /><br />
               <input type="email" title="email" placeholder="email" /><br />
               <input type="password" title="password" placeholder="password" /><br />
-              <button type="submit" class="btn">Login</button><br />
+              <button id="signup" type="submit" class="btn">Sign up</button><br />
             </form> 
       </div>
       </div>
+	  <script src="/socket.io/socket.io.js"></script>
+	  <script>
+		//document.getElementById('forgot').onclick=function() {alert("guess ur fukt lolololol");}
+		var socket= io();
+		var button= document.getElementById('login');
+		button.onclick=function()
+		{
+			alert("loging in");
+		};
+		var button2 = document.getElementById('signup');
+		button2.onclick=function()
+		{
+			alert("Signing up");
+		};
+	  </script>
   <br /><br />
 
   <script>
