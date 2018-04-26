@@ -34,25 +34,25 @@ insert into PET values ('018', 'Unicorn', 300, 'Sprites/unicorn.png');
 insert into PET values ('019', 'Awooo', 100, 'Sprites/wolf.png');
 insert into PET values ('020', 'Zebra', 100, 'Sprites/zebra.png');
 
-insert into COSMETIC values ('101', 'Rainbow', 50, 'Sprites/rainbow.png')
-insert into COSMETIC values ('102', 'Angel', 100, 'Sprites/angel.png')
-insert into COSMETIC values ('103', 'Balloons', 150, 'Sprites/balloons.png')
-insert into COSMETIC values ('104', 'Bitcoim', 125, 'Sprites/bitcoin.png')
-insert into COSMETIC values ('105', 'Burger', 200, 'Sprites/burger.png')
-insert into COSMETIC values ('106', 'Cape', 50, 'Sprites/cape.png')
-insert into COSMETIC values ('107', 'Cowboi', 100, 'Sprites/cowboi.png')
-insert into COSMETIC values ('108', 'Cowboiii', 200, 'Sprites/cowboiii.png')
-insert into COSMETIC values ('109', 'Cutie Mark', 50, 'Sprites/cutiemark.png')
-insert into COSMETIC values ('110', 'Donut', 100, 'Sprites/donut.png')
-insert into COSMETIC values ('111', 'Flower', 50, 'Sprites/flower.png')
-insert into COSMETIC values ('112', 'Im Gayyy', 50, 'Sprites/gayyyy.png')
-insert into COSMETIC values ('113', 'Helicopter', 100, 'Sprites/heli.png')
-insert into COSMETIC values ('114', 'Phone', 100, 'Sprites/phone.png')
-insert into COSMETIC values ('115', 'Pumpkin Head', 100, 'Sprites/pumpkin.png')
-insert into COSMETIC values ('116', 'Rider', 100, 'Sprites/rider.png')
-insert into COSMETIC values ('117', 'Snek Rider', 200, 'Sprites/ridersnek.png')
-insert into COSMETIC values ('118', 'Skateboard', 150, 'Sprites/skateboard.png')
-insert into COSMETIC values ('119', 'Stars', 300, 'Sprites/stars.png')
-insert into COSMETIC values ('120', 'Tiedye', 50, 'Sprites/tiedye.png')
-insert into COSMETIC values ('121', 'Tophat', 100, 'Sprites/tophat.png')
-insert into COSMETIC values ('122', 'Umbrella', 100, 'Sprites/umbrella.png')
+insert into COSMETIC values ('101', 'Rainbow', 50, 'Sprites/rainbow.png');
+insert into COSMETIC values ('102', 'Angel', 100, 'Sprites/angel.png');
+insert into COSMETIC values ('103', 'Balloons', 150, 'Sprites/balloons.png');
+insert into COSMETIC values ('104', 'Bitcoim', 125, 'Sprites/bitcoin.png');
+insert into COSMETIC values ('105', 'Burger', 200, 'Sprites/burger.png');
+insert into COSMETIC values ('106', 'Cape', 50, 'Sprites/cape.png');
+insert into COSMETIC values ('107', 'Cowboi', 100, 'Sprites/cowboi.png');
+insert into COSMETIC values ('108', 'Cowboiii', 200, 'Sprites/cowboiii.png');
+insert into COSMETIC values ('109', 'Cutie Mark', 50, 'Sprites/cutiemark.png');
+insert into COSMETIC values ('110', 'Donut', 100, 'Sprites/donut.png');
+insert into COSMETIC values ('111', 'Flower', 50, 'Sprites/flower.png');
+insert into COSMETIC values ('112', 'Im Gayyy', 50, 'Sprites/gayyyy.png');
+insert into COSMETIC values ('113', 'Helicopter', 100, 'Sprites/heli.png');
+insert into COSMETIC values ('114', 'Phone', 100, 'Sprites/phone.png');
+insert into COSMETIC values ('115', 'Pumpkin Head', 100, 'Sprites/pumpkin.png');
+insert into COSMETIC values ('116', 'Rider', 100, 'Sprites/rider.png');
+insert into COSMETIC values ('117', 'Snek Rider', 200, 'Sprites/ridersnek.png');
+insert into COSMETIC values ('118', 'Skateboard', 150, 'Sprites/skateboard.png');
+insert into COSMETIC values ('119', 'Stars', 300, 'Sprites/stars.png');
+insert into COSMETIC values ('120', 'Tiedye', 50, 'Sprites/tiedye.png');
+insert into COSMETIC values ('121', 'Tophat', 100, 'Sprites/tophat.png');
+insert into COSMETIC values ('122', 'Umbrella', 100, 'Sprites/umbrella.png');
