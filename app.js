@@ -5,6 +5,10 @@ var express = require('express')();
 var app = require('http').Server(express);
 // Websockets
 var io = require('socket.io').listen(app);
+// Mysql module
+var db = require('mysql').createConnection({host:'localhost', user:'root', password:'', database:'petDB'});
+
+db.connect();
 
 // HTTP request handling
 // HTML file requests
@@ -37,6 +41,29 @@ io.on("connection",
 							{
 								io.emit('chat',msg);
 							});
+		socket.on('query', function(q)
+							{
+								console.log("Querying db!");
+								console.log(q);
+								db.query(q, function(error, results, fields)
+											{
+												if(error)
+												{
+													console.log("Query fail!");
+													console.log(error);
+													socket.emit('qFail', error);
+												}
+												else
+												{
+													console.log("Query sucess!");
+													// Send back results
+													console.log(results);
+													console.log(results[0].Lname);
+													socket.emit('qSuccess', results);
+												}
+											});
+							});
+		
 	  });
 
 // Port and IP address
@@ -49,3 +76,15 @@ app.listen(server_port, server_ip_address,
 	      {
 	        console.log("Listening on " + server_ip_address + ":" + server_port);
 	      });
+		  
+process.on('exit', function()
+					{
+						db.end();
+						console.log("Goodbye");
+					});
+process.on('SIGINT', function()
+					{
+						//db.end();
+						//console.log("Goodbye");
+						process.exit()
+					});
