@@ -65,8 +65,8 @@
           <div class="container">
           <div style="font-size: 30px">Login</div>
           <form>
-            <input type="text" title="username" placeholder="username" /><br />
-            <input type="password" title="username" placeholder="password" /><br />
+            <input type="text" id = "username" title="username" placeholder="username" /><br />
+            <input type="password" id = "password" title="password" placeholder="password" /><br />
             <button id="login" type="submit" class="btn">Login</button><br />
             <a id='forgot' class="forgot" href="http://localhost:8081/password_change.html">Forgot Password?</a><br />
           </form>
@@ -97,7 +97,16 @@
 		var button= document.getElementById('login');
 		button.onclick=function()
 		{
-			alert("loging in");
+			socket.emit("query", "select Username, Password from USER where username="+document.getElementById('username').value+" and password="+document.getElementById('password').value);
+			socket.on("qSuccess", function(tups)
+			{
+				//set cookie with username password
+				alert("Login yes");
+			});
+			socket.on("qFail", function(error)
+			{
+				alert("Login Failed");
+			});
 		};
 		var button2 = document.getElementById('signup');
 		button2.onclick=function()
