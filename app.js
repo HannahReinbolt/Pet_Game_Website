@@ -57,9 +57,16 @@ io.on("connection",
 												{
 													console.log("Query sucess!");
 													// Send back results
-													console.log(results);
-													console.log(results[0].Lname);
-													socket.emit('qSuccess', results);
+													if(results.length < 1)
+													{
+														console.log("No results");
+														socket.emit("qFail", "No match");
+													}
+													else
+													{
+														console.log(results);
+														socket.emit('qSuccess', results);
+													}
 												}
 											});
 							});

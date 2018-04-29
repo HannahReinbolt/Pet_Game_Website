@@ -67,7 +67,7 @@
           <form>
             <input type="text" id = "username" title="username" placeholder="username" /><br />
             <input type="password" id = "password" title="password" placeholder="password" /><br />
-            <button id="login" type="submit" class="btn">Login</button><br />
+            <button id="login" type="button" class="btn">Login</button><br />
             <a id='forgot' class="forgot" href="http://localhost:8081/password_change.html">Forgot Password?</a><br />
           </form>
           </div>
@@ -86,7 +86,7 @@
               <input type="text" title="username" placeholder="username" /><br />
               <input type="email" title="email" placeholder="email" /><br />
               <input type="password" title="password" placeholder="password" /><br />
-              <button id="signup" type="submit" class="btn">Sign up</button><br />
+              <button id="signup" type="button" class="btn">Sign up</button><br />
             </form> 
       </div>
       </div>
@@ -97,7 +97,7 @@
 		var button= document.getElementById('login');
 		button.onclick=function()
 		{
-			socket.emit("query", "select Username, Password from USER where username="+document.getElementById('username').value+" and password="+document.getElementById('password').value);
+			socket.emit("query", "select Username,Password from USER where Username='"+document.getElementById('username').value+"' and Password='"+document.getElementById('password').value+"'");
 			socket.on("qSuccess", function(tups)
 			{
 				//set cookie with username password
