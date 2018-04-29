@@ -102,9 +102,13 @@
 			{
 				//set cookie with username password
 				alert("Login yes");
+<<<<<<< HEAD
 				// Query if user is admin
 				// If user is admin, send to admin console
 				// Else send to profile page
+=======
+        document.cookie = "username=" + document.getElementById('username').value + "; password=" + document.getElementById('password').value;
+>>>>>>> cd3547571f059cc7cfabfab1e9677443cba8312e
 			});
 			socket.on("qFail", function(error)
 			{
