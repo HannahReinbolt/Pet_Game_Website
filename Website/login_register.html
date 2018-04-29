@@ -92,16 +92,19 @@
       </div>
 	  <script src="/socket.io/socket.io.js"></script>
 	  <script>
-		//document.getElementById('forgot').onclick=function() {alert("guess ur fukt lolololol");}
 		var socket= io();
 		var button= document.getElementById('login');
 		button.onclick=function()
 		{
+			// Try to log user in
 			socket.emit("query", "select Username,Password from USER where Username='"+document.getElementById('username').value+"' and Password='"+document.getElementById('password').value+"'");
 			socket.on("qSuccess", function(tups)
 			{
 				//set cookie with username password
 				alert("Login yes");
+				// Query if user is admin
+				// If user is admin, send to admin console
+				// Else send to profile page
 			});
 			socket.on("qFail", function(error)
 			{
