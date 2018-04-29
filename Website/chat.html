@@ -76,7 +76,9 @@
   var button= document.getElementById('submit');
   button.onclick=function()
 					{
-						var message = {"username" : "user1",
+						var user = document.cookie.split(";")[0].substring(9);
+						
+						var message = {"username" : user,
 									   "body"  : document.getElementById('input').value};
 						document.getElementById('input').value = "";
 						socket.emit('chatin', JSON.stringify(message));
