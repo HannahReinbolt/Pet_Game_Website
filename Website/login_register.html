@@ -102,6 +102,7 @@
 			{
 				//set cookie with username password
 				alert("Login yes");
+        document.cookie = "username=" + document.getElementById('username').value + "; password=" + document.getElementById('password').value;
 			});
 			socket.on("qFail", function(error)
 			{
