@@ -77,16 +77,15 @@
   
 <div id="window" class="container">
 </div><br>
+
 <script src="/socket.io/socket.io.js"></script>
 <script>
 	var socket = io();
-  var login = document.cookie.split(";");
-	socket.emit("query", "select * from USER, BUY_PET, PET where Username='"+login[0].substring(9)
-  +"', USER.Username=BUY_PET.Username, BUY_PET.ID=PET.ID order by cost asc");
+  var login = document.cookie.split("|");
+	socket.emit("query", JSON.stringify({"id":"pets", "query":"select * from USER, BUY_PET, PET where Username='"+login[0].substring(9)+"', USER.Username=BUY_PET.Username, BUY_PET.ID=PET.ID order by cost asc"}));
 
-	socket.on("qSuccess", function(tups)
+	socket.on("petsuccess", function(tups)
 	{
-		document.getElementById("window").innerHTML += "<div class=\"row\">";
 		for(var i = 0; i < tups.length; i ++)
 		{
 			var item = "<div class=\"col-sm-4\"> <div class=\"panel panel-primary\"> <div class=\"panel-heading\">"
@@ -96,30 +95,7 @@
 
 			document.getElementById("window").innerHTML += item;
 			var script = "<script></script>";
-		// 	document.getElementById("worth"+i).onclick=function()
-		// 	{
-		// 		var login = document.cookie.split(";");
-		// 		socket.emit("query", "update WEAR set Money=USER.Money-"+tups[i].cost+" where Username='"
-    //     +login[0].substring(9)+"' and Password='"+login[1].substring(9)+"'");
-		// 		socket.on("qSuccess", function(tups)
-		// 				{
-		// 					socket.emit("query", "insert int BUY_PET values ("+login[0].substring(9)+", "
-    //           +login[1].substring(9)+", "+tups[i].ID+")");
-		// 					alert("Purchase successful!");
-
-		// 				});
-		// 				socket.on("qFail", function(error)
-		// 				{
-		// 					alert("You could not select this pet item! >:(");
-		// 				});
-		// 	}
-		// }
-		document.getElementById("window").innerHTML += "</div>";
-	});
-	socket.on("qFail", function(error)
-	{
-		alert("Database has failed UwU. It's a sad day in Rollatown.");
-	});
+		
 </script>
 
 <footer class="container-fluid text-center">
