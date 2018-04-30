@@ -106,8 +106,11 @@ socket.on("successpet", function(tups)
 	socket.on("successcos", function(tups)
 	{
 		cosImg = 'http://localhost:8081/'+tups[0].sprite;
-		// For some bewildering reason the play function will run but the window will not render if done like this
-		// The game apparently demands to be run as soon as the window loads
+		play();
+	});
+	socket.on("failcos", function(error)
+	{
+		// Play with default cosmetic
 		play();
 	});
 		
@@ -118,8 +121,14 @@ socket.on("failpet", function(error)
 	window.location="http://localhost:8081/login_register.html"
 });
 
+var playing = false;
 function play()
 {
+	// Make sure this is run only once
+	if(playing)
+		return;
+	else
+		playing = true;
     //Get canvas and context
     var c   = document.getElementById('canvas'),
         ctx = c.getContext('2d');

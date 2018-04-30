@@ -126,6 +126,7 @@
 							{
 								socket.emit("query", JSON.stringify({"id":"buy"+index, "query":"insert into BUY_PET values ('"+login[0].substring(9)+"','"+login[1].substring(9)+"','"+id+"')"}));
 								alert("Purchase successful!");
+								location.reload();
 							});
 							socket.on("failpay"+index, function(error)
 							{
