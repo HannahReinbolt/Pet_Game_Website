@@ -73,6 +73,7 @@
 <!--Javascript for Flappy Bird game-->
 <!--Tutorial found here: https://github.com/giotiskl/Canvas-Bird-->
 <!--Original mechanics are under a Creative Commons Lisence -->
+<script src="/socket.io/socket.io.js"></script>
 <script>
 
 (function() {
@@ -80,6 +81,7 @@
     var c   = document.getElementById('canvas'),
         ctx = c.getContext('2d');
 
+	// Query equipped pets
     //Load assets
     var bgImg = loadImage('https://raw.githubusercontent.com/giotiskl/Canvas-Bird/master/assets/background.jpg', 640, 480),
         playerImg = loadImage('http://localhost:8081/Sprites/purpleboi.png', 64, 64),

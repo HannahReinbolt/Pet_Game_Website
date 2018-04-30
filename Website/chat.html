@@ -76,7 +76,7 @@
   var button= document.getElementById('submit');
   button.onclick=function()
 					{
-						var user = document.cookie.split(";")[0].substring(9);
+						var user = document.cookie.split("|")[0].substring(9);
 						
 						var message = {"username" : user,
 									   "body"  : document.getElementById('input').value};
