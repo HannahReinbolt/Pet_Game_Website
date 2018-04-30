@@ -79,6 +79,30 @@
 	{
 		for(var i = 0; i < tups.length; i ++)
 		{
+<<<<<<< HEAD
+			var item = "<div class=\"col-sm-4\"> <div class=\"panel panel-primary\"> <div class=\"panel-heading\">"
+      +tups[i].name+"</div> <div class=\"panel-body\"><img src=\"http://localhost:8081/"+tups[i].sprite
+      +"\" class=\"img-responsive\" style=\"width:100%\" alt=\"Image\"></div> <button id=\"buy"
+      +i+"\" type=\"button\" class=\"btn\">Buy: $"+tups[i].cost+"</button> </div> </div>";
+
+			document.getElementById("window").innerHTML += item;
+			var script = "<script></script>";
+			document.getElementById("buy"+i).onclick=function()
+			{
+				var login = document.cookie.split(";");
+				socket.emit("query", "update USER set Money=USER.Money-"+tups[i].cost+" where Username='"
+        +login[0].substring(9)+"' and Password='"+login[1].substring(9)+"'");
+				socket.on("qSuccess", function(tups)
+						{
+							socket.emit("query", "insert int BUY_PET values ("+login[0].substring(9)+", "+login[1].substring(9)+", "+tups[i].ID+")");
+							alert("Purchase successful!");
+						});
+						socket.on("qFail", function(error)
+						{
+							alert("You need more money!");
+						});
+			}
+=======
 			var item = document.createElement("DIV");
 			item.setAttribute("id", "item"+i);
 			item.setAttribute("class", "col-sm-4");
@@ -117,6 +141,7 @@
 							});
 				};
 			})(i, tups[i].cost, tups[i].ID);
+>>>>>>> 43f0e4ec4e1f557992cb01600d9e070ec1c84d46
 		}
 	});
 	socket.on("failpets", function(error)

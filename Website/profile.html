@@ -60,55 +60,67 @@
   </div><!-- /.container-fluid -->
 </nav>
 
-<div class="jumbotron">
-  <div class="container text-center">
-    <h1>My Portfolio</h1>      
-    <p>Some text that represents "Me"...</p>
+<div class="backsplash">
+  <div class="profile_pic">
+    <img src="https://placehold.it/150x80?text=IMAGE" class="img-responsive" style="width:10%" alt="Image">
   </div>
+  <div class="profile_name">
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+    var socket = io();
+    var login = document.cookie.split(";");
+        document.getElementById("profile_name").innerHTML = login[0].substring(9);
+    </script>      
+  </div>
+  <p>Gaze at my supreme collection! Mwahahaaha!</p>
 </div>
   
-<div class="container-fluid bg-3 text-center">    
-  <h3>Some of my Work</h3><br>
-  <div class="row">
-    <div class="col-sm-3">
-      <p>Some text..</p>
-      <img src="https://placehold.it/150x80?text=IMAGE" class="img-responsive" style="width:100%" alt="Image">
-    </div>
-    <div class="col-sm-3"> 
-      <p>Some text..</p>
-      <img src="https://placehold.it/150x80?text=IMAGE" class="img-responsive" style="width:100%" alt="Image">
-    </div>
-    <div class="col-sm-3"> 
-      <p>Some text..</p>
-      <img src="https://placehold.it/150x80?text=IMAGE" class="img-responsive" style="width:100%" alt="Image">
-    </div>
-    <div class="col-sm-3">
-      <p>Some text..</p>
-      <img src="https://placehold.it/150x80?text=IMAGE" class="img-responsive" style="width:100%" alt="Image">
-    </div>
-  </div>
+<div id="window" class="container">
 </div><br>
+<script src="/socket.io/socket.io.js"></script>
+<script>
+	var socket = io();
+  var login = document.cookie.split(";");
+	socket.emit("query", "select * from USER, BUY_PET, PET where Username='"+login[0].substring(9)
+  +"', USER.Username=BUY_PET.Username, BUY_PET.ID=PET.ID order by cost asc");
 
-<div class="container-fluid bg-3 text-center">    
-  <div class="row">
-    <div class="col-sm-3">
-      <p>Some text..</p>
-      <img src="https://placehold.it/150x80?text=IMAGE" class="img-responsive" style="width:100%" alt="Image">
-    </div>
-    <div class="col-sm-3"> 
-      <p>Some text..</p>
-      <img src="https://placehold.it/150x80?text=IMAGE" class="img-responsive" style="width:100%" alt="Image">
-    </div>
-    <div class="col-sm-3"> 
-      <p>Some text..</p>
-      <img src="https://placehold.it/150x80?text=IMAGE" class="img-responsive" style="width:100%" alt="Image">
-    </div>
-    <div class="col-sm-3">
-      <p>Some text..</p>
-      <img src="https://placehold.it/150x80?text=IMAGE" class="img-responsive" style="width:100%" alt="Image">
-    </div>
-  </div>
-</div><br><br>
+	socket.on("qSuccess", function(tups)
+	{
+		document.getElementById("window").innerHTML += "<div class=\"row\">";
+		for(var i = 0; i < tups.length; i ++)
+		{
+			var item = "<div class=\"col-sm-4\"> <div class=\"panel panel-primary\"> <div class=\"panel-heading\">"
+      +tups[i].name+"</div> <div class=\"panel-body\"><img src=\"http://localhost:8081/"+tups[i].sprite
+      +"\" class=\"img-responsive\" style=\"width:100%\" alt=\"Image\"></div> <button id=\"worth"
+      +i+"\" type=\"button\" class=\"btn\">Worth: $"+tups[i].cost+"</button> </div> </div>";
+
+			document.getElementById("window").innerHTML += item;
+			var script = "<script></script>";
+		// 	document.getElementById("worth"+i).onclick=function()
+		// 	{
+		// 		var login = document.cookie.split(";");
+		// 		socket.emit("query", "update WEAR set Money=USER.Money-"+tups[i].cost+" where Username='"
+    //     +login[0].substring(9)+"' and Password='"+login[1].substring(9)+"'");
+		// 		socket.on("qSuccess", function(tups)
+		// 				{
+		// 					socket.emit("query", "insert int BUY_PET values ("+login[0].substring(9)+", "
+    //           +login[1].substring(9)+", "+tups[i].ID+")");
+		// 					alert("Purchase successful!");
+
+		// 				});
+		// 				socket.on("qFail", function(error)
+		// 				{
+		// 					alert("You could not select this pet item! >:(");
+		// 				});
+		// 	}
+		// }
+		document.getElementById("window").innerHTML += "</div>";
+	});
+	socket.on("qFail", function(error)
+	{
+		alert("Database has failed UwU. It's a sad day in Rollatown.");
+	});
+</script>
 
 <footer class="container-fluid text-center">
   <p>Footer Text</p>
