@@ -75,6 +75,21 @@
 <!--Original mechanics are under a Creative Commons Lisence -->
 <script src="/socket.io/socket.io.js"></script>
 <script>
+var socket = io();
+
+if(!document.cookie)
+{
+	// Redirect to login_register
+	window.location="http://localhost:8081/login_register.html";
+}
+var user = document.cookie.split("|");
+var query = JSON.stringify({"id":"user","query":"select USER where Username='"+user[0].substring(9)+"' and Password='"+user[1].substring(9)+"'"});
+socket.emit("query", query);
+socket.on("failuser", function(error)
+{
+	// Redirect to login_register
+	window.location="http://localhost:8081/login_register.html";
+});
 
 (function() {
     //Get canvas and context
@@ -82,6 +97,7 @@
         ctx = c.getContext('2d');
 
 	// Query equipped pets
+	// Query equipped accessories
     //Load assets
     var bgImg = loadImage('https://raw.githubusercontent.com/giotiskl/Canvas-Bird/master/assets/background.jpg', 640, 480),
         playerImg = loadImage('http://localhost:8081/Sprites/purpleboi.png', 64, 64),
