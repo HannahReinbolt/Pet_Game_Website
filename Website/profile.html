@@ -62,14 +62,28 @@
 
 <div class="backsplash">
   <div class="profile_pic">
-    <img src="https://placehold.it/150x80?text=IMAGE" class="img-responsive" style="width:10%" alt="Image">
+    <img src="https://placehold.it/150x80?text=IMAGE" class="img-responsive" alt="Image">
   </div>
+
   <div class="profile_name">
     <script src="/socket.io/socket.io.js"></script>
     <script>
     var socket = io();
-    var login = document.cookie.split(";");
-        document.getElementById("profile_name").innerHTML = login[0].substring(9);
+    var user = document.cookie.split("|");
+    var query = JSON.stringify({"id":"user","query":"select * from USER where Username='"+user[0].substring(9)+"' and Password='"+user[1].substring(9)+"'"});
+    
+    socket.emit("query", query);
+    socket.on("successuser", function(tups){
+      var nameitem = document.createAttribute("div");
+      nameitem.innerHTML(tups.name);
+			document.getElementById("profile_name").appendChild(nameitem);
+    });
+
+    socket.on("failuser", function(error)
+    {
+	    // Redirect to login_register
+	    window.location="http://localhost:8081/login_register.html";
+    });
     </script>      
   </div>
   <p>Gaze at my supreme collection! Mwahahaaha!</p>
@@ -81,26 +95,72 @@
 <script src="/socket.io/socket.io.js"></script>
 <script>
 	var socket = io();
-  var login = document.cookie.split("|");
-	socket.emit("query", JSON.stringify({"id":"pets", "query":"select * from USER, BUY_PET, PET where Username='"+login[0].substring(9)+"', USER.Username=BUY_PET.Username, BUY_PET.ID=PET.ID order by cost asc"}));
 
-	socket.on("petsuccess", function(tups)
+	if(!document.cookie)
+	{
+		// Redirect to login_register
+		window.location="http://localhost:8081/login_register.html";
+	}
+	var user = document.cookie.split("|");
+	var query = JSON.stringify({"id":"user","query":"select Username from USER where Username='"+user[0].substring(9)+"' and Password='"+user[1].substring(9)+"'"});
+	socket.emit("query", query);
+	socket.on("failuser", function(error)
+	{
+		// Redirect to login_register
+		window.location="http://localhost:8081/login_register.html";
+	});
+	
+	var user = document.cookie.split("|");
+	socket.emit("query", JSON.stringify({"id":"pets", "query":"select * from PET as P where P.ID not in (select B.Pet_ID from BUY_PET as B where B.Username='"+user[0].substring(9)+"' and B.Password='"+user[1].substring(9)+"') order by cost asc"}));
+
+	socket.on("successpets", function(tups)
 	{
 		for(var i = 0; i < tups.length; i ++)
 		{
-      var item = document.createElement("div");
+			var item = document.createElement("DIV");
 			item.setAttribute("id", "item"+i);
 			item.setAttribute("class", "col-sm-4");
-			item.innerHTML = "<div class=\"panel panel-primary\"><div class=\"panel-heading\">"
-      +tups[i].name+"</div> <div class=\"panel-body\"><img src=\"http://localhost:8081/"
-      +tups[i].sprite+"\" class=\"img-responsive\" style=\"width:100%\" alt=\"Image\"></div></div>";
-      
+			item.innerHTML = "<div class=\"panel panel-primary\"><div class=\"panel-heading\">"+tups[i].name+"</div> <div class=\"panel-body\"><img src=\"http://localhost:8081/"+tups[i].sprite+"\" class=\"img-responsive\" style=\"width:100%\" alt=\"Image\"></div></div>";
+			// Create item window
+			//document.getElementById("window").innerHTML += item;
+			// Create buy button
+			var button = document.createElement("BUTTON");
+			button.setAttribute("id", "buy"+i);
+			button.setAttribute("type", "button");
+			button.setAttribute("class", "btn");
+			button.innerText = "Buy: $"+tups[i].cost;
+ 			 //<button id=\"buy"+i+"\" type=\"button\" class=\"btn\">Buy: $"+tups[i].cost+"</button> 
+			item.appendChild(button);
 			document.getElementById("window").appendChild(item);
-    }
-  });
-  socket.on("petfail", function(error)
+		}
+		for(var i = 0; i < tups.length; i ++)
+		{
+			(function(index, cost, id)
+			{
+				document.getElementById("buy"+index).onclick = function()
+				{
+					console.log("click");
+					console.log(document.cookie);
+					var login = document.cookie.split("|");
+					console.log(login);
+					socket.emit("query", JSON.stringify({"id":"pay"+index, "query":"update USER set Money=USER.Money-"+cost+" where Username='"+login[0].substring(9)+"' and Password='"+login[1].substring(9)+"'"}));
+					socket.on("successpay"+index, function(tups)
+							{
+								socket.emit("query", JSON.stringify({"id":"buy"+index, "query":"insert into BUY_PET values ('"+login[0].substring(9)+"','"+login[1].substring(9)+"','"+id+"')"}));
+								alert("Purchase successful!");
+								location.reload();
+							});
+							socket.on("failpay"+index, function(error)
+							{
+								alert("You need more money!");
+							});
+				};
+			})(i, tups[i].cost, tups[i].ID);
+		}
+	});
+	socket.on("failpets", function(error)
 	{
-		alert("Error with pulling information from database. :c ");
+		alert("Database has failed UwU");
 	});
 		
 </script>
