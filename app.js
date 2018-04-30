@@ -45,13 +45,14 @@ io.on("connection",
 							{
 								console.log("Querying db!");
 								console.log(q);
-								db.query(q, function(error, results, fields)
+								query = JSON.parse(q);
+								db.query(query.query, function(error, results, fields)
 											{
 												if(error)
 												{
 													console.log("Query fail!");
 													console.log(error);
-													socket.emit('qFail', error);
+													socket.emit("fail"+query.id, error);
 												}
 												else
 												{
@@ -60,12 +61,12 @@ io.on("connection",
 													if(results.length < 1)
 													{
 														console.log("No results");
-														socket.emit("qFail", "No match");
+														socket.emit("fail"+query.id, "No match");
 													}
 													else
 													{
 														console.log(results);
-														socket.emit('qSuccess', results);
+														socket.emit("success"+query.id, results);
 													}
 												}
 											});

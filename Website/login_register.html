@@ -77,32 +77,47 @@
             <div class="container">
             <div style="font-size: 30px">Sign Up</div>
             <form>
-              <input type="text" title="firstname" placeholder="first name" /><br />
-              <input type="text" title="middlename" placeholder="middle name" /><br />
-              <input type="text" title="lastname" placeholder="last name" /><br /></br />
+              <input id='signupF' type="text" title="firstname" placeholder="first name" /><br />
+              <input id='signupM' type="text" title="middlename" placeholder="middle name" /><br />
+              <input id='signupL' type="text" title="lastname" placeholder="last name" /><br /></br />
               <div>Please enter your birthday:</div><br />
-              <input type="date" title="birthday" placeholder="birthday" /><br /><br />
+              <input id='signupB' type="date" title="birthday" placeholder="birthday" /><br /><br />
 
-              <input type="text" title="username" placeholder="username" /><br />
-              <input type="email" title="email" placeholder="email" /><br />
-              <input type="password" title="password" placeholder="password" /><br />
+              <input id='signupU' type="text" title="username" placeholder="username" /><br />
+              <input id='signupE' type="email" title="email" placeholder="email" /><br />
+              <input id='signupPh' type="phone" title="phone" placeholder="phone" /><br />			  
+              <input id='signupP' type="password" title="password" placeholder="password" /><br />
               <button id="signup" type="button" class="btn">Sign up</button><br />
             </form> 
       </div>
       </div>
 	  <script src="/socket.io/socket.io.js"></script>
 	  <script>
-		//document.getElementById('forgot').onclick=function() {alert("guess ur fukt lolololol");}
 		var socket= io();
 		var button= document.getElementById('login');
 		button.onclick=function()
 		{
+			// Try to log user in
 			socket.emit("query", "select Username,Password from USER where Username='"+document.getElementById('username').value+"' and Password='"+document.getElementById('password').value+"'");
 			socket.on("qSuccess", function(tups)
 			{
+				// Query if user is admin
+				socket.emit("query", "select Username from ADMIN where Username='"+document.getElementById('username').value+"'");
+				// If user is admin, send to admin console
+				socket.on("qSuccess", function(tups)
+				{
+					// Redirect to admin page
+					window.location="http://localhost:8081/profile.html"; 
+				});
+				// Else send to profile page
+				socket.on('qFail', function(error)
+				{
+					// Redirect to profile page
+					window.location="http://localhost:8081/admin.html";
+					
+				});
 				//set cookie with username password
-				alert("Login yes");
-        document.cookie = "username=" + document.getElementById('username').value + "; password=" + document.getElementById('password').value;
+				document.cookie = "username=" + document.getElementById('username').value + "|password=" + document.getElementById('password').value;
 			});
 			socket.on("qFail", function(error)
 			{
@@ -112,7 +127,37 @@
 		var button2 = document.getElementById('signup');
 		button2.onclick=function()
 		{
-			alert("Signing up");
+			
+			// Make sure all required values are there
+			if(!document.getElementById('signupF').value || !document.getElementById('signupM').value ||
+				!document.getElementById('signupL').value || !document.getElementById('signupB').value ||
+				!document.getElementById('signupU').value || !document.getElementById('signupP').value ||
+				!document.getElementById('signupE').value || !document.getElementById('signupPh').value)
+			{
+				alert("Error: please fill in all fields on the signup form!");
+			}
+			else
+			{
+				var valuesUser = "\'"+document.getElementById('signupU').value+"\',\'"+document.getElementById('signupP').value+"\',\'"+document.getElementById('signupF').value+"\',\'"+document.getElementById('signupM').value+"\',\'"+document.getElementById('signupL').value+"\',\'"+document.getElementById('signupB').value+"\',0,\'Sprites/potato.png\'";
+				var valuesUser2 = "'"+document.getElementById('signupU').value+"','"+document.getElementById('signupP').value+"','"+document.getElementById('signupPh').value+"','"+document.getElementById('signupE').value+"'";
+				// Add information to user tables
+				socket.emit('query', "insert into USER values("+valuesUser+")");
+				socket.on('qSuccess', function(tups)
+				{
+					socket.on('qSuccess', function(tups)
+					{						
+						alert("Account created! :)");
+						document.cookie = "username=" + document.getElementById('signupU').value + "|password=" + document.getElementById('signupP').value;
+						window.location="http://localhost:8081/profile.html";
+					});
+					socket.emit('query', "insert into USER2 values("+valuesUser2+")");
+				});
+				// If fail, error user
+				socket.on('qFail', function(error)
+				{
+					alert("Error from server: "+error.sqlMessage);
+				});
+			}
 		};
 	  </script>
   <br /><br />
