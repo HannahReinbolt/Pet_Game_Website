@@ -99,11 +99,10 @@
 		{
 			// Try to log user in
 			socket.emit("query", JSON.stringify({"id":"login", "query":"select Username,Password from USER where Username='"+document.getElementById('username').value+"' and Password='"+document.getElementById('password').value+"'"}));
-			socket.on("sucesslogin", function(tups)
+			socket.on("successlogin", function(tups)
 			{
 				//set cookie with username password
 				document.cookie = "username=" + document.getElementById('username').value + "|password=" + document.getElementById('password').value;
-				window.location="http://localhost:8081/profile.html";
 				// Query if user is admin
 				socket.emit("query", JSON.stringify({"id":"admin", "query":"select Username from ADMIN where Username='"+document.getElementById('username').value+"'"}));
 				// If user is admin, send to admin console
