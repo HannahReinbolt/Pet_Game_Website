@@ -98,28 +98,29 @@
 		button.onclick=function()
 		{
 			// Try to log user in
-			socket.emit("query", "select Username,Password from USER where Username='"+document.getElementById('username').value+"' and Password='"+document.getElementById('password').value+"'");
-			socket.on("qSuccess", function(tups)
+			socket.emit("query", JSON.stringify({"id":"login", "query":"select Username,Password from USER where Username='"+document.getElementById('username').value+"' and Password='"+document.getElementById('password').value+"'"}));
+			socket.on("sucesslogin", function(tups)
 			{
-				// Query if user is admin
-				socket.emit("query", "select Username from ADMIN where Username='"+document.getElementById('username').value+"'");
-				// If user is admin, send to admin console
-				socket.on("qSuccess", function(tups)
-				{
-					// Redirect to admin page
-					window.location="http://localhost:8081/profile.html"; 
-				});
-				// Else send to profile page
-				socket.on('qFail', function(error)
-				{
-					// Redirect to profile page
-					window.location="http://localhost:8081/admin.html";
-					
-				});
 				//set cookie with username password
 				document.cookie = "username=" + document.getElementById('username').value + "|password=" + document.getElementById('password').value;
+				window.location="http://localhost:8081/profile.html";
+				// Query if user is admin
+				socket.emit("query", JSON.stringify({"id":"admin", "query":"select Username from ADMIN where Username='"+document.getElementById('username').value+"'"}));
+				// If user is admin, send to admin console
+				socket.on("successadmin", function(tups)
+				{
+					// Redirect to admin page
+					window.location="http://localhost:8081/admin.html"; 
+				});
+				// Else send to profile page
+				socket.on('failadmin', function(error)
+				{
+					// Redirect to profile page
+					window.location="http://localhost:8081/profile.html";
+					
+				});
 			});
-			socket.on("qFail", function(error)
+			socket.on("faillogin", function(error)
 			{
 				alert("Login Failed");
 			});
@@ -141,7 +142,7 @@
 				var valuesUser = "\'"+document.getElementById('signupU').value+"\',\'"+document.getElementById('signupP').value+"\',\'"+document.getElementById('signupF').value+"\',\'"+document.getElementById('signupM').value+"\',\'"+document.getElementById('signupL').value+"\',\'"+document.getElementById('signupB').value+"\',0,\'Sprites/potato.png\'";
 				var valuesUser2 = "'"+document.getElementById('signupU').value+"','"+document.getElementById('signupP').value+"','"+document.getElementById('signupPh').value+"','"+document.getElementById('signupE').value+"'";
 				// Add information to user tables
-				socket.emit('query', "insert into USER values("+valuesUser+")");
+				socket.emit('query', JSON.stringify({"insert into USER values("+valuesUser+")"}));
 				socket.on('qSuccess', function(tups)
 				{
 					socket.on('qSuccess', function(tups)
