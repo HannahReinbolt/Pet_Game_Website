@@ -101,22 +101,32 @@
 			socket.emit("query", JSON.stringify({"id":"login", "query":"select Username,Password from USER where Username='"+document.getElementById('username').value+"' and Password='"+document.getElementById('password').value+"'"}));
 			socket.on("successlogin", function(tups)
 			{
-				//set cookie with username password
-				document.cookie = "username=" + document.getElementById('username').value + "|password=" + document.getElementById('password').value;
-				// Query if user is admin
-				socket.emit("query", JSON.stringify({"id":"admin", "query":"select Username from ADMIN where Username='"+document.getElementById('username').value+"'"}));
-				// If user is admin, send to admin console
-				socket.on("successadmin", function(tups)
+				// See if user is banned
+				socket.emit("query", JSON.stringify({"id":"ban", "query":"select reason,expiration_date from BAN as B, BAN2 as B2 where B.Username=B2.Username and B.Password=B2.Password and B.Username='"+document.getElementById('username').value+"' and B.Password='"+document.getElementById('password').value+"'"}));
+				socket.on("successban", function(tups)
 				{
-					// Redirect to admin page
-					window.location="http://localhost:8081/admin.html"; 
+					alert("You have been banned and cannot log in\nBanned until: "+tups[0].expiration_date+"\nBanned for: "+tups[0].reason);
+					location.reload();
 				});
-				// Else send to profile page
-				socket.on('failadmin', function(error)
+				socket.on("failban", function()
 				{
-					// Redirect to profile page
-					window.location="http://localhost:8081/profile.html";
-					
+					//set cookie with username password
+					document.cookie = "username=" + document.getElementById('username').value + "|password=" + document.getElementById('password').value;
+					// Query if user is admin
+					socket.emit("query", JSON.stringify({"id":"admin", "query":"select Username from ADMIN where Username='"+document.getElementById('username').value+"'"}));
+					// If user is admin, send to admin console
+					socket.on("successadmin", function(tups)
+					{
+						// Redirect to admin page
+						window.location="http://localhost:8081/admin.html"; 
+					});
+					// Else send to profile page
+					socket.on('failadmin', function(error)
+					{
+						// Redirect to profile page
+						window.location="http://localhost:8081/profile.html";
+						
+					});
 				});
 			});
 			socket.on("faillogin", function(error)
