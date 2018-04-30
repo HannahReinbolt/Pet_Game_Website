@@ -68,6 +68,13 @@
 </div>
 
 <div id="window" class="container">
+<p>Pets</p>
+<br>
+<div id="pets" class="row"></div>
+<br>
+<p>Accessories</p>
+<br>
+<div id="cos" class="row"></div>
 </div><br>
 
 <script src="/socket.io/socket.io.js"></script>
@@ -90,9 +97,9 @@
 	
 	var user = document.cookie.split("|");
 	socket.emit("query", JSON.stringify({"id":"pets", "query":"select * from PET as P where P.ID not in (select B.Pet_ID from BUY_PET as B where B.Username='"+user[0].substring(9)+"' and B.Password='"+user[1].substring(9)+"') order by cost asc"}));
-
 	socket.on("successpets", function(tups)
 	{
+		console.log(tups);
 		for(var i = 0; i < tups.length; i ++)
 		{
 			var item = document.createElement("DIV");
@@ -109,7 +116,7 @@
 			button.innerText = "Buy: $"+tups[i].cost;
  			 //<button id=\"buy"+i+"\" type=\"button\" class=\"btn\">Buy: $"+tups[i].cost+"</button> 
 			item.appendChild(button);
-			document.getElementById("window").appendChild(item);
+			document.getElementById("pets").appendChild(item);
 		}
 		for(var i = 0; i < tups.length; i ++)
 		{
@@ -125,7 +132,7 @@
 					socket.on("successpay"+index, function(tups)
 							{
 								socket.emit("query", JSON.stringify({"id":"buy"+index, "query":"insert into BUY_PET values ('"+login[0].substring(9)+"','"+login[1].substring(9)+"','"+id+"')"}));
-								alert("Purchase successful!");
+								//alert("Purchase successful!");
 								location.reload();
 							});
 							socket.on("failpay"+index, function(error)
@@ -135,6 +142,7 @@
 				};
 			})(i, tups[i].cost, tups[i].ID);
 		}
+		loadCos();
 	});
 	socket.on("failpets", function(error)
 	{
@@ -143,56 +151,60 @@
 	
 	//cosmetics
 	//var user = document.cookie.split("|");
-	socket.emit("query", JSON.stringify({"id":"cosmetics", "query":"select * from COSMETIC as C where C.ID not in (select B.Cos_ID from BUY_COS as B where B.Username='"+user[0].substring(9)+"' and B.Password='"+user[1].substring(9)+"') order by cost asc"}));
+	function loadCos()
+	{
+		socket.emit("query", JSON.stringify({"id":"cosmetics", "query":"select * from COSMETIC as C where C.ID not in (select B.Cos_ID from BUY_COS as B where B.Username='"+user[0].substring(9)+"' and B.Password='"+user[1].substring(9)+"') order by cost asc"}));
 
-	socket.on("successcosmetics", function(tups)
-	{
-		for(var i = 0; i < tups.length; i ++)
+		socket.on("successcosmetics", function(tups)
 		{
-			var item = document.createElement("DIV");
-			item.setAttribute("id", "itemc"+i);
-			item.setAttribute("class", "col-sm-4");
-			item.innerHTML = "<div class=\"panel panel-primary\"><div class=\"panel-heading\">"+tups[i].name+"</div> <div class=\"panel-body\"><img src=\"http://localhost:8081/"+tups[i].sprite+"\" class=\"img-responsive\" style=\"width:100%\" alt=\"Image\"></div></div>";
-			// Create item window
-			//document.getElementById("window").innerHTML += item;
-			// Create buy button
-			var button = document.createElement("BUTTON");
-			button.setAttribute("id", "buyc"+i);
-			button.setAttribute("type", "button");
-			button.setAttribute("class", "btn");
-			button.innerText = "Buy: $"+tups[i].cost;
- 			 //<button id=\"buy"+i+"\" type=\"button\" class=\"btn\">Buy: $"+tups[i].cost+"</button> 
-			item.appendChild(button);
-			document.getElementById("window").appendChild(item);
-		}
-		for(var i = 0; i < tups.length; i ++)
-		{
-			(function(index, cost, id)
+			for(var i = 0; i < tups.length; i ++)
 			{
-				document.getElementById("buyc"+index).onclick = function()
+				var item = document.createElement("DIV");
+				item.setAttribute("id", "itemc"+i);
+				item.setAttribute("class", "col-sm-4");
+				item.innerHTML = "<div class=\"panel panel-primary\"><div class=\"panel-heading\">"+tups[i].name+"</div> <div class=\"panel-body\"><img src=\"http://localhost:8081/"+tups[i].sprite+"\" class=\"img-responsive\" style=\"width:100%\" alt=\"Image\"></div></div>";
+				// Create item window
+				//document.getElementById("window").innerHTML += item;
+				// Create buy button
+				var button = document.createElement("BUTTON");
+				button.setAttribute("id", "buyc"+i);
+				button.setAttribute("type", "button");
+				button.setAttribute("class", "btn");
+				button.innerText = "Buy: $"+tups[i].cost;
+				 //<button id=\"buy"+i+"\" type=\"button\" class=\"btn\">Buy: $"+tups[i].cost+"</button> 
+				item.appendChild(button);
+				document.getElementById("cos").appendChild(item);
+			}
+			for(var i = 0; i < tups.length; i ++)
+			{
+				(function(index, cost, id)
 				{
-					console.log("click");
-					console.log(document.cookie);
-					var login = document.cookie.split("|");
-					console.log(login);
-					socket.emit("query", JSON.stringify({"id":"payc"+index, "query":"update USER set Money=USER.Money-"+cost+" where Username='"+login[0].substring(9)+"' and Password='"+login[1].substring(9)+"'"}));
-					socket.on("successpayc"+index, function(tups)
-							{
-								socket.emit("query", JSON.stringify({"id":"buyc"+index, "query":"insert into BUY_COS values ('"+login[0].substring(9)+"','"+login[1].substring(9)+"','"+id+"')"}));
-								alert("Purchase successful!");
-							});
-							socket.on("failpayc"+index, function(error)
-							{
-								alert("You need more money!");
-							});
-				};
-			})(i, tups[i].cost, tups[i].ID);
-		}
-	});
-	socket.on("failcosmetics", function(error)
-	{
-		alert("Database has failed UwU");
-	});
+					document.getElementById("buyc"+index).onclick = function()
+					{
+						console.log("click");
+						console.log(document.cookie);
+						var login = document.cookie.split("|");
+						console.log(login);
+						socket.emit("query", JSON.stringify({"id":"payc"+index, "query":"update USER set Money=USER.Money-"+cost+" where Username='"+login[0].substring(9)+"' and Password='"+login[1].substring(9)+"'"}));
+						socket.on("successpayc"+index, function(tups)
+								{
+									socket.emit("query", JSON.stringify({"id":"buyc"+index, "query":"insert into BUY_COS values ('"+login[0].substring(9)+"','"+login[1].substring(9)+"','"+id+"')"}));
+									//alert("Purchase successful!");
+									location.reload();
+								});
+								socket.on("failpayc"+index, function(error)
+								{
+									alert("You need more money!");
+								});
+					};
+				})(i, tups[i].cost, tups[i].ID);
+			}
+		});
+		socket.on("failcosmetics", function(error)
+		{
+			alert("Database has failed UwU");
+		});
+	}
 </script>
 
 <footer class="container-fluid text-center">
