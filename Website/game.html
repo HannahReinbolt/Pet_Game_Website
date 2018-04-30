@@ -83,7 +83,7 @@ if(!document.cookie)
 	window.location="http://localhost:8081/login_register.html";
 }
 var user = document.cookie.split("|");
-var query = JSON.stringify({"id":"user","query":"select USER where Username='"+user[0].substring(9)+"' and Password='"+user[1].substring(9)+"'"});
+var query = JSON.stringify({"id":"user","query":"select Username from USER where Username='"+user[0].substring(9)+"' and Password='"+user[1].substring(9)+"'"});
 socket.emit("query", query);
 socket.on("failuser", function(error)
 {
@@ -103,7 +103,11 @@ socket.on("failuser", function(error)
 	socket.emit("query", JSON.stringify({"id":"cos", "query":"select sprite from COSMETIC as C, WEAR as W where W.Cos_ID=C.ID and W.Username='"+user[0].substring(9)+"'"}));
 	socket.on("successpet", function(tups)
 	{
-		
+		petImg = 'http://localhost:8081/'+tups[0].Picture;
+	});
+	socket.on("successcos", function(tups)
+	{
+		cosImg = 'http://localhost:8081/'+tups[0].sprite;
 	});
 	
 	// Query equipped accessories
