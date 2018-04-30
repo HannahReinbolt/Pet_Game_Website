@@ -72,13 +72,28 @@
 
 <script src="/socket.io/socket.io.js"></script>
 <script>
+
+if(!document.cookie)
+{
+	// Redirect to login_register
+	window.location="http://localhost:8081/login_register.html";
+}
+var user = document.cookie.split("|");
+var query = JSON.stringify({"id":"user","query":"select USER where Username='"+user[0].substring(9)+"' and Password='"+user[1].substring(9)+"'"});
+socket.emit("query", query);
+socket.on("failuser", function(error)
+{
+	// Redirect to login_register
+	window.location="http://localhost:8081/login_register.html";
+});
+
 	var socket = io();
 	var user = document.cookie.split("|");
 	socket.emit("query", JSON.stringify({"id":"pets", "query":"select * from PET as P where P.ID not in (select B.Pet_ID from BUY_PET as B where B.Username='"+user[0].substring(9)+"' and B.Password='"+user[1].substring(9)+"') order by cost asc"}));
 
 	socket.on("successpets", function(tups)
 	{
-		for(var i = 1; i < tups.length; i ++)
+		for(var i = 0; i < tups.length; i ++)
 		{
 			var item = document.createElement("DIV");
 			item.setAttribute("id", "item"+i);
@@ -96,7 +111,7 @@
 			item.appendChild(button);
 			document.getElementById("window").appendChild(item);
 		}
-		for(var i = 1; i < tups.length; i ++)
+		for(var i = 0 i < tups.length; i ++)
 		{
 			(function(index, cost, id)
 			{
