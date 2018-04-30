@@ -73,34 +73,53 @@
 <script src="/socket.io/socket.io.js"></script>
 <script>
 	var socket = io();
-	socket.emit("query", "select * from PET order by cost asc");
+	socket.emit("query", JSON.stringify({"id":"pets", "query":"select * from PET order by cost asc"}));
 
-	socket.on("qSuccess", function(tups)
+	socket.on("successpets", function(tups)
 	{
-		document.getElementById("window").innerHTML += "<div class=\"row\">";
 		for(var i = 0; i < tups.length; i ++)
 		{
-			var item = "<div class=\"col-sm-4\"> <div class=\"panel panel-primary\"> <div class=\"panel-heading\">"+tups[i].name+"</div> <div class=\"panel-body\"><img src=\"http://localhost:8081/"+tups[i].sprite+"\" class=\"img-responsive\" style=\"width:100%\" alt=\"Image\"></div> <button id=\"buy"+i+"\" type=\"button\" class=\"btn\">Buy: $"+tups[i].cost+"</button> </div> </div>";
-			document.getElementById("window").innerHTML += item;
-			var script = "<script></script>";
-			document.getElementById("buy"+i).onclick=function()
-			{
-				var login = document.cookie.split(";");
-				socket.emit("query", "update USER set Money=USER.Money-"+tups[i].cost+" where Username='"+login[0].substring(9)+"' and Password='"+login[1].substring(9)+"'");
-				socket.on("qSuccess", function(tups)
-						{
-							socket.emit("query", "insert int BUY_PET values ("+login[0].substring(9)+", "+login[1].substring(9)+", "+tups[i].ID+")");
-							alert("Purchase successful!");
-						});
-						socket.on("qFail", function(error)
-						{
-							alert("You need more money!");
-						});
-			}
+			var item = document.createElement("DIV");
+			item.setAttribute("id", "item"+i);
+			item.setAttribute("class", "col-sm-4");
+			item.innerHTML = "<div class=\"panel panel-primary\"><div class=\"panel-heading\">"+tups[i].name+"</div> <div class=\"panel-body\"><img src=\"http://localhost:8081/"+tups[i].sprite+"\" class=\"img-responsive\" style=\"width:100%\" alt=\"Image\"></div></div>";
+			// Create item window
+			//document.getElementById("window").innerHTML += item;
+			// Create buy button
+			var button = document.createElement("BUTTON");
+			button.setAttribute("id", "buy"+i);
+			button.setAttribute("type", "button");
+			button.setAttribute("class", "btn");
+			button.innerText = "Buy: $"+tups[i].cost;
+ 			 //<button id=\"buy"+i+"\" type=\"button\" class=\"btn\">Buy: $"+tups[i].cost+"</button> 
+			item.appendChild(button);
+			document.getElementById("window").appendChild(item);
 		}
-		document.getElementById("window").innerHTML += "</div>";
+		for(var i = 0; i < tups.length; i ++)
+		{
+			(function(index, cost, id)
+			{
+				document.getElementById("buy"+index).onclick = function()
+				{
+					console.log("click");
+					console.log(document.cookie);
+					var login = document.cookie.split("|");
+					console.log(login);
+					socket.emit("query", JSON.stringify({"id":"pay"+index, "query":"update USER set Money=USER.Money-"+cost+" where Username='"+login[0].substring(9)+"' and Password='"+login[1].substring(9)+"'"}));
+					socket.on("successpay"+index, function(tups)
+							{
+								socket.emit("query", JSON.stringify({"id":"buy"+index, "query":"insert into BUY_PET values ('"+login[0].substring(9)+"','"+login[1].substring(9)+"','"+id+"')"}));
+								alert("Purchase successful!");
+							});
+							socket.on("failpay"+index, function(error)
+							{
+								alert("You need more money!");
+							});
+				};
+			})(i, tups[i].cost, tups[i].ID);
+		}
 	});
-	socket.on("qFail", function(error)
+	socket.on("failpets", function(error)
 	{
 		alert("Database has failed UwU");
 	});

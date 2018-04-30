@@ -117,7 +117,7 @@
 					
 				});
 				//set cookie with username password
-				document.cookie = "username=" + document.getElementById('username').value + "; password=" + document.getElementById('password').value;
+				document.cookie = "username=" + document.getElementById('username').value + "|password=" + document.getElementById('password').value;
 			});
 			socket.on("qFail", function(error)
 			{
@@ -147,7 +147,7 @@
 					socket.on('qSuccess', function(tups)
 					{						
 						alert("Account created! :)");
-						document.cookie = "username=" + document.getElementById('signupU').value + "; password=" + document.getElementById('signupP').value;
+						document.cookie = "username=" + document.getElementById('signupU').value + "|password=" + document.getElementById('signupP').value;
 						window.location="http://localhost:8081/profile.html";
 					});
 					socket.emit('query', "insert into USER2 values("+valuesUser2+")");
