@@ -12,6 +12,11 @@ insert into USER2 values ('SirDalyn', 'StrongPassword', '3141592653', 'gmw7x9@ms
 insert into ADMIN values ('SirDalyn', 'StrongPassword');
 insert into CUSTOMER values ('SirDalyn', 'StrongPassword', 0); 
 
+insert into USER values ('samiam', 'iamsam', 'sam', 'i', 'am', '1957-03-14', 998, 'Sprites/potato.png');
+insert into USER2 values ('samiam', 'iamsam', '5555555555', 'hmrvg9@mst.edu');
+insert into ADMIN values ('samiam', 'iamsam');
+insert into CUSTOMER values ('samiam', 'iamsam', 0);
+
 
 insert into PET values ('001', 'Kitty', 50, 'Sprites/kitty.png');
 insert into PET values ('002', 'Buzz', 100, 'Sprites/bee.png');
