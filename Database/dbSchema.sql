@@ -10,7 +10,7 @@ create table USER(
 	Lname varchar(255),
 	Dob date,
 	Money int not null default 0,
-	Picture varchar(255), /* filepath to picture */
+	Picture varchar(255) not null default 'Sprites/potato.png',
 	primary key (Username,Password));
 	
 create table USER2(
@@ -19,6 +19,7 @@ create table USER2(
 	Phone char(10),
 	Email varchar(255),
 	primary key (Username,Password,Phone,Email));
+
 
 create table CUSTOMER(
 	Username varchar(255) references USER.Username,

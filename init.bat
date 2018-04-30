@@ -17,7 +17,7 @@ echo Invoking apache and mysql services
 start "apache" C:\xampp\apache_start.bat
 start "mysql" C:\xampp\mysql_start.bat
 
-timeout /t 15 /nobreak
+timeout /t 7 /nobreak
 
 echo Building database
 cd Database
@@ -29,6 +29,7 @@ echo Installing nodeJS modules
 call npm install
 echo Invoking local server
 start "LocalServer" node app.js
+timeout /t 3 /nobreak
 
 echo Launching default browser
 explorer http:\\localhost:8081
