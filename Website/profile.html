@@ -81,44 +81,29 @@
 <script src="/socket.io/socket.io.js"></script>
 <script>
 	var socket = io();
-<<<<<<< HEAD
   var login = document.cookie.split("|");
 	socket.emit("query", JSON.stringify({"id":"pets", "query":"select * from USER, BUY_PET, PET where Username='"+login[0].substring(9)+"', USER.Username=BUY_PET.Username, BUY_PET.ID=PET.ID order by cost asc"}));
-=======
-
-	if(!document.cookie)
-	{
-		// Redirect to login_register
-		window.location="http://localhost:8081/login_register.html";
-	}
-	var user = document.cookie.split("|");
-	var query = JSON.stringify({"id":"user","query":"select USER where Username='"+user[0].substring(9)+"' and Password='"+user[1].substring(9)+"'"});
-	socket.emit("query", query);
-	socket.on("failuser", function(error)
-	{
-		// Redirect to login_register
-		window.location="http://localhost:8081/login_register.html";
-	});
-	
-  var login = document.cookie.split(";");
-	socket.emit("query", "select * from USER, BUY_PET, PET where Username='"+login[0].substring(9)
-  +"', USER.Username=BUY_PET.Username, BUY_PET.ID=PET.ID order by cost asc");
->>>>>>> 5f601d4e63cab3068d000a1287f7aafdafd8536b
 
 	socket.on("petsuccess", function(tups)
 	{
 		for(var i = 0; i < tups.length; i ++)
 		{
-			var item = "<div class=\"col-sm-4\"> <div class=\"panel panel-primary\"> <div class=\"panel-heading\">"
-      +tups[i].name+"</div> <div class=\"panel-body\"><img src=\"http://localhost:8081/"+tups[i].sprite
-      +"\" class=\"img-responsive\" style=\"width:100%\" alt=\"Image\"></div> <button id=\"worth"
-      +i+"\" type=\"button\" class=\"btn\">Worth: $"+tups[i].cost+"</button> </div> </div>";
-
-			document.getElementById("window").innerHTML += item;
-			var script = "<script></script>";
+      var item = document.createElement("div");
+			item.setAttribute("id", "item"+i);
+			item.setAttribute("class", "col-sm-4");
+			item.innerHTML = "<div class=\"panel panel-primary\"><div class=\"panel-heading\">"
+      +tups[i].name+"</div> <div class=\"panel-body\"><img src=\"http://localhost:8081/"
+      +tups[i].sprite+"\" class=\"img-responsive\" style=\"width:100%\" alt=\"Image\"></div></div>";
+      
+			document.getElementById("window").appendChild(item);
+    }
+  });
+  socket.on("petfail", function(error)
+	{
+		alert("Error with pulling information from database. :c ");
+	});
 		
 </script>
-
 <footer class="container-fluid text-center">
   <p>Footer Text</p>
 </footer>
