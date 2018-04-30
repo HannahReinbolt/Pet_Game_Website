@@ -71,9 +71,9 @@ create table COSMETIC(
 	primary key (ID));
 
 create table WEAR(
-	Pet_ID varchar(255) references PET.ID,
-	Cost_ID varchar(255) references COSMETIC.ID,
-	primary key (Pet_ID, Cost_ID));
+	Username varchar(255) references USER.Username,
+	Cos_ID varchar(255) references COSMETIC.ID,
+	primary key (Username, Cos_ID));
 
 create table ACHIEVEMENT(
 	Name varchar(255),

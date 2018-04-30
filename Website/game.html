@@ -95,8 +95,17 @@ socket.on("failuser", function(error)
     //Get canvas and context
     var c   = document.getElementById('canvas'),
         ctx = c.getContext('2d');
-
+	
+	var petImg = 'http://localhost:8081/Sprites/potato.png';
+	var cosImg = 'http://localhost:8081/Sprites/empty.png';
 	// Query equipped pets
+	socket.emit("query", JSON.stringify({"id":"pet", "query":"select Picture from User where Username='"+user[0].substring(9)+"' and Password='"++user[1].substring(9)+"'"}));
+	socket.emit("query", JSON.stringify({"id":"cos", "query":"select sprite from COSMETIC as C, WEAR as W where W.Cos_ID=C.ID and W.Username='"+user[0].substring(9)+"'"}));
+	socket.on("successpet", function(tups)
+	{
+		
+	});
+	
 	// Query equipped accessories
     //Load assets
     var bgImg = loadImage('https://raw.githubusercontent.com/giotiskl/Canvas-Bird/master/assets/background.jpg', 640, 480),
