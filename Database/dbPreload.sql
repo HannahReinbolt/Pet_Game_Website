@@ -84,3 +84,9 @@ insert into COSMETIC values ('119', 'Stars', 300, 'Sprites/stars.png');
 insert into COSMETIC values ('120', 'Tiedye', 50, 'Sprites/tiedye.png');
 insert into COSMETIC values ('121', 'Tophat', 100, 'Sprites/tophat.png');
 insert into COSMETIC values ('122', 'Umbrella', 100, 'Sprites/umbrella.png');
+
+insert into ACHIEVEMENT values ('Copyright Avoider', '017', 50);
+insert into ACHIEVEMENT values ('Dragon Tamer', '007', 100);
+insert into ACHIEVEMENT values ('Snek Master', '016', 50);
+insert into ACHIEVEMENT values ('Fantasy Lover', '018', 100);
+insert into ACHIEVEMENT values ('Crazy Cat Person', '001', 25);
