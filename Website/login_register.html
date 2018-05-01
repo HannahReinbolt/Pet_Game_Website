@@ -102,7 +102,7 @@
 			socket.on("successlogin", function(tups)
 			{
 				// See if user is banned
-				socket.emit("query", JSON.stringify({"id":"ban", "query":"select reason,expiration_date from BAN as B, BAN2 as B2 where B.Username=B2.Username and B.Password=B2.Password and B.Username='"+document.getElementById('username').value+"' and B.Password='"+document.getElementById('password').value+"'"}));
+				socket.emit("query", JSON.stringify({"id":"ban", "query":"select reason,expiration_date from BAN as B, BAN2 as B2 where B.Username=B2.Username and B.Username='"+document.getElementById('username').value+"'"}));
 				socket.on("successban", function(tups)
 				{
 					alert("You have been banned and cannot log in\nBanned until: "+tups[0].expiration_date+"\nBanned for: "+tups[0].reason);
@@ -149,7 +149,7 @@
 			else
 			{
 				var valuesUser = "\'"+document.getElementById('signupU').value+"\',\'"+document.getElementById('signupP').value+"\',\'"+document.getElementById('signupF').value+"\',\'"+document.getElementById('signupM').value+"\',\'"+document.getElementById('signupL').value+"\',\'"+document.getElementById('signupB').value+"\',0,\'Sprites/potato.png\'";
-				var valuesUser2 = "'"+document.getElementById('signupU').value+"','"+document.getElementById('signupP').value+"','"+document.getElementById('signupPh').value+"','"+document.getElementById('signupE').value+"'";
+				var valuesUser2 = "'"+document.getElementById('signupU').value+"','"+document.getElementById('signupPh').value+"','"+document.getElementById('signupE').value+"'";
 				// Add information to user tables
 				socket.emit('query', JSON.stringify({"id":"signup", "query":"insert into USER values("+valuesUser+")"}));
 				socket.on('successsignup', function(tups)
@@ -157,7 +157,7 @@
 					socket.emit('query', JSON.stringify({"id":"signup2", "query":"insert into USER2 values("+valuesUser2+")"}));
 					socket.on('successsignup2', function(tups)
 					{						
-						socket.emit('query', JSON.stringify({"id":"firstpet", "query":"insert into BUY_PET values('"+document.getElementById('signupU').value+"','"+document.getElementById('signupP').value+"','014')"}));
+						socket.emit('query', JSON.stringify({"id":"firstpet", "query":"insert into BUY_PET values('"+document.getElementById('signupU').value+"','014')"}));
 						socket.on("successfirstpet", function(tups)
 						{
 							document.cookie = "username=" + document.getElementById('signupU').value + "|password=" + document.getElementById('signupP').value;
