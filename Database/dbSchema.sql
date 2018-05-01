@@ -11,7 +11,8 @@ create table USER(
 	Dob date,
 	Money int not null default 0,
 	Picture varchar(255) not null default 'Sprites/potato.png',
-	primary key (Username,Password));
+	primary key (Username,Password)
+	check(Money>=0));
 	
 create table USER2(
 	Username varchar(255),

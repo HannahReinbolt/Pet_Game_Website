@@ -146,6 +146,10 @@ function play()
 	var pointAudio = new Audio('https://raw.githubusercontent.com/giotiskl/Canvas-Bird/master/assets/point.mp3'),
 		loseAudio = new Audio('https://raw.githubusercontent.com/giotiskl/Canvas-Bird/master/assets/lose.mp3');
 
+	// Keep track of points to add to money
+	var pts = 0;
+	var commit = false;
+	
 	//Helper methods
 	function loadImage(src, width, height) {
 		var img = new Image(width, height);
@@ -187,6 +191,7 @@ function play()
 		_score: 0,
 		//methods
 		increaseScore: function() {
+			pts++;
 			this._score++;
 			pointAudio.play();
 		},
@@ -294,9 +299,9 @@ function play()
 	//constants
 	var ENEMY_NUMBER = 5,     //how many sets of enemies
 		ENEMY_OFFSET = 300,   //horizontal distance between obstacles
-		ENEMY_DISTANCE = 120, //vertical opening between obstacles
-		MAX_YOFFSET = 50,
-		MIN_YOFFSET = -150;
+		ENEMY_DISTANCE = 110, //vertical opening between obstacles
+		MAX_YOFFSET = 125,
+		MIN_YOFFSET = -125;
 	//Enemy IDs
 	var nextEnemyId, lastEnemyId; // defined in setupEnemies()
 
@@ -330,7 +335,10 @@ function play()
 				//Update next enemy ID
 				nextEnemyId = nextEnemyId === ENEMY_NUMBER - 1 ? 0 : nextEnemyId + 1;
 				//Increase the score
-				if (PLAYER_CONTROLS_ON) scoreCounter.increaseScore();
+				if (PLAYER_CONTROLS_ON)
+				{
+					scoreCounter.increaseScore();
+				}
 			}
 		}
 	};
@@ -396,6 +404,13 @@ function play()
 		player.fall();
 		//collision check
 		if (player.hasCollided()) {
+			if(!commit)
+			{
+				commit = true;
+				console.log("Get money: "+pts);
+				// Update user's score
+				socket.emit("query", JSON.stringify({"id":"score", "query":"update USER set Money=Money+"+pts+" where Username='"+user[0].substring(9)+"' and Password='"+user[1].substring(9)+"'"}));								
+			}
 			//deactivate player controls
 			PLAYER_CONTROLS_ON = false;
 			//when player falls of screen stop game
@@ -431,8 +446,8 @@ function play()
 
 	//Reset game function
 	function resetGame() {
-		// Update user's score
-		socket.emit("query", JSON.stringify({"id":"score", "query":"update USER set Money=Money+"+scoreCounter.getScore()+" where Username='"+user[0].substring(9)+"' and Password='"+user[1].substring(9)+"'"}));		
+		pts=0;
+		commit = false;
 		scoreCounter.reset();
 		player.reset();
 		setupEnemies();
