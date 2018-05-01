@@ -10,6 +10,21 @@ var db = require('mysql').createConnection({host:'localhost', user:'root', passw
 
 db.connect();
 
+// Schedule deletion of expired bans
+setInterval(function()
+{
+	var todayDate = new Date(Date.now());
+	var today = ""+todayDate.getFullYear()+"-"+("0"+(todayDate.getMonth()+1)).slice(-2)+"-"+("0"+todayDate.getDate()).slice(-2);
+	console.log(today);
+	var qry = "delete from BAN where expiration_date < '"+today+"'";
+	console.log(qry);
+	db.query(qry, function(error, results, fields)
+	{
+		console.log(results);
+		console.log(error);
+	});
+}, 60000/*3600000*/);
+
 // HTTP request handling
 // HTML file requests
 // Home page

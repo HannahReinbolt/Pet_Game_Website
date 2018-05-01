@@ -70,87 +70,45 @@ var socket = io();
 		window.location="http://localhost:8081/login_register.html";
 	}
 	var user = document.cookie.split("|");
-	var query = JSON.stringify({"id":"user","query":"select Username from USER where Username='"+user[0].substring(9)+"' and Password='"+user[1].substring(9)+"'"});
+	var query = JSON.stringify({"id":"user","query":"select Username from ADMIN where Username='"+user[0].substring(9)+"'"});
 	socket.emit("query", query);
 	socket.on("failuser", function(error)
 	{
+		alert("You are not an administrator!");
 		// Redirect to login_register
-		window.location="http://localhost:8081/login_register.html";
+		window.location="http://localhost:8081/profile.html";
 	});
 </script>
 
 <div class="container-fluid">
   <div class="row content">
-    
     <div class="col-sm-9">
       <div class="well">
         <h4>Dashboard</h4>
         <p>Some text..</p>
       </div>
-      <div class="row">
-        <div class="col-sm-3">
-          <div class="well">
-            <h4>Users</h4>
-            <p>1 Million</p> 
-          </div>
-        </div>
-        <div class="col-sm-3">
-          <div class="well">
-            <h4>Pages</h4>
-            <p>100 Million</p> 
-          </div>
-        </div>
-        <div class="col-sm-3">
-          <div class="well">
-            <h4>Sessions</h4>
-            <p>10 Million</p> 
-          </div>
-        </div>
-        <div class="col-sm-3">
-          <div class="well">
-            <h4>Bounce</h4>
-            <p>30%</p> 
-          </div>
-        </div>
-      </div>
-      <div class="row">
-        <div class="col-sm-4">
-          <div class="well">
-            <p>Text</p> 
-            <p>Text</p> 
-            <p>Text</p> 
-          </div>
-        </div>
-        <div class="col-sm-4">
-          <div class="well">
-            <p>Text</p> 
-            <p>Text</p> 
-            <p>Text</p> 
-          </div>
-        </div>
-        <div class="col-sm-4">
-          <div class="well">
-            <p>Text</p> 
-            <p>Text</p> 
-            <p>Text</p> 
-          </div>
-        </div>
-      </div>
-      <div class="row">
-        <div class="col-sm-8">
-          <div class="well">
-            <p>Text</p> 
-          </div>
-        </div>
-        <div class="col-sm-4">
-          <div class="well">
-            <p>Text</p> 
-          </div>
-        </div>
-      </div>
+      <div id="userBox" class="overflow">
+	  </div>
+	  <div id="banBox" class="overflow">
+	  </div>
+	  <div id="liftBox" class="overflow">
+	  </div>
     </div>
   </div>
 </div>
+
+<script src="/socket.io/socket.io.js"></script>
+<script>
+	// Fill in userBox
+		// Contains user's information (name, username, email, phone, numstrikes, age)
+		// Button to delete user
+	// Fill in banBox
+		// Contains un-banned usernames (username, numstrikes)
+		// Button to ban user
+	// Fill in liftBox
+		// Contains list of banned usernames and exp dates
+		// Button to view reason, button to lift ban
+</script>
 
 </body>
 </html>

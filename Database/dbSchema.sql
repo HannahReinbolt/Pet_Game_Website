@@ -3,7 +3,7 @@ This file contains all the schemas for the relations in our database. Used to bu
 */
 
 create table USER(
-	Username varchar(255),
+	Username varchar(255) unique,
 	Password varchar(255),
 	Fname varchar(255),
 	Mname varchar(255),
@@ -15,7 +15,6 @@ create table USER(
 	
 create table USER2(
 	Username varchar(255) references USER.Username,
-	Password varchar(255) references USER.Password,
 	Phone char(10),
 	Email varchar(255),
 	primary key (Username,Password,Phone,Email));
@@ -23,36 +22,30 @@ create table USER2(
 
 create table CUSTOMER(
 	Username varchar(255) references USER.Username,
-	Password varchar(255) references USER.Password,
 	Numstrikes int(3),
 	primary key (Username, Password));
 	
 create table ADMIN(
 	Username varchar(255) references USER.Username,
-	Password varchar(255) references USER.Password,
 	primary key (Username, Password));
 	
 create table BAN(
 	Username varchar(255) references USER.Username,
-	Password varchar(255) references USER.Password,
 	expiration_date date,
 	primary key (Username, Password));
 	
 create table BAN2(
 	Username varchar(255) references USER.Username,
-	Password varchar(255) references USER.Password,
 	reason varchar(255),
 	primary key (Username, Password, reason));
 	
 create table BUY_PET(
 	Username varchar(255) references USER.Username,
-	Password varchar(255) references USER.Password,
 	Pet_ID   varchar(255) references PET.ID,
 	primary key (Username, Password, Pet_ID));
 	
 create table BUY_COS(
 	Username varchar(255) references USER.Username,
-	Password varchar(255) references USER.Password,
 	Cos_ID   varchar(255) references COSMETIC.ID,
 	primary key (Username, Password, Cos_ID));
 	
