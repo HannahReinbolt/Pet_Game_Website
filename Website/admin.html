@@ -99,15 +99,118 @@ var socket = io();
 
 <script src="/socket.io/socket.io.js"></script>
 <script>
+	var socket = io();
 	// Fill in userBox
 		// Contains user's information (name, username, email, phone, numstrikes, age)
 		// Button to delete user
-	// Fill in banBox
-		// Contains un-banned usernames (username, numstrikes)
-		// Button to ban user
+	var user = document.cookie.split("|");
+	var todayDate = new Date(Date.now());
+	var today = ""+todayDate.getFullYear()+"-"+("0"+(todayDate.getMonth()+1)).slice(-2)+"-"+("0"+todayDate.getDate()).slice(-2);
+	console.log(today);
+	
+	socket.emit("query", JSON.stringify({"id":"use", "query":"select Fname,Mname,Lname,Username,Phone,Email,Numstrikes,('"+today+"'-Dob) as Age from USER as U, USER2 as U2, CUSTOMER as C where U.Username=U2.Username and U.Username=C.Username"}));
+	socket.on("successuse", function(tups)
+	{
+		console.log(tups);
+		for(var i = 0; i < tups.length; i ++)
+		{
+			var item = document.createElement("DIV");
+			item.setAttribute("id", "user"+i);
+			item.setAttribute("class", "col-sm-4");
+			//item.innerHTML = "<div class=\"panel panel-primary\"><div class=\"panel-heading\">"+tups[i].name+"</div> <div class=\"panel-body\"><img src=\"http://localhost:8081/"+tups[i].sprite+"\" class=\"img-responsive\" style=\"width:100%\" alt=\"Image\"></div></div>";
+			item.innerHTML = "<div class=\"panel panel-primary\"><div class=\"panel-heading\">"+tups[i].Username+"</div> <div class=\"panel-body\"><p>Name:"+tups[i].Fname+" "+tups[i].Mname+" "+tups[i].Lname+"</p><p>Age:"+tups[i].Age+"</p><p>Email:"+tups[i].Email+"</p><p>Phone:"+tups[i].Phone+"</p><p>Account Strikes:"+tups[i].Numstrikes+"</p></div></div>";
+			// Create delete button
+			var button = document.createElement("BUTTON");
+			button.setAttribute("id", "del"+i);
+			button.setAttribute("type", "button");
+			button.setAttribute("class", "btn");
+			button.innerText = "Delete Account";
+			item.appendChild(button);
+			document.getElementById("userBox").appendChild(item);
+		}
+		for(var i = 0; i < tups.length; i ++)
+		{
+			(function(index, username)
+			{
+				document.getElementById("del"+index).onclick = function()
+				{
+					console.log("click");
+					socket.emit("query", JSON.stringify({"id":"del"+index, "query":"delete from USER set Money=USER.Money-"+cost+" where Username='"+username+"'"}));
+					socket.on("successdel"+index, function(tups)
+							{
+								alert("User deleted!");
+								location.reload();
+							});
+					socket.on("faildel"+index, function(error)
+					{
+						alert("Failed to delete user! " + error.sqlMessage);
+					});
+				};
+			})(i, tups[i].Username);
+		}
+		loadLift();
+	});
+	
+	// Ban submit onclick: ban user
+	
 	// Fill in liftBox
 		// Contains list of banned usernames and exp dates
 		// Button to view reason, button to lift ban
+	function loadLift()
+	{
+		socket.emit("query", JSON.stringify({"id":"bans", "query":"select Username,expiration_date from BAN as B"}));
+		socket.on("successbans", function(tups)
+		{
+			console.log(tups);
+			for(var i = 0; i < tups.length; i ++)
+			{
+				var item = document.createElement("DIV");
+				item.setAttribute("id", "ban"+i);
+				item.setAttribute("class", "col-sm-4");
+				item.innerHTML = "<div class=\"panel panel-primary\"><div class=\"panel-body\"><p>User: "+tups[i].Username+"</p><p>Expires: "+tups[i].expiration_date+"</p></div></div>";
+				
+				// Create lift button
+				var button = document.createElement("BUTTON");
+				button.setAttribute("id", "lift"+i);
+				button.setAttribute("type", "button");
+				button.setAttribute("class", "btn");
+				button.innerText = "Lift ban";
+				
+				// Create view reasons button
+				var button2 = document.createElement("BUTTON");
+				button.setAttribute("id", "reasons"+i);
+				button.setAttribute("type", "button");
+				button.setAttribute("class", "btn");
+				button.innerText = "View Reasons";
+				
+				item.appendChild(button);
+				item.appendChild(button2);
+				document.getElementById("liftBox").appendChild(item);
+			}
+			for(var i = 0; i < tups.length; i ++)
+			{
+				(function(index, cost, id)
+				{
+					document.getElementById("lift"+index).onclick = function()
+					{
+						console.log("click");
+						socket.emit("query", JSON.stringify({"id":"pay"+index, "query":"update USER set Money=USER.Money-"+cost+" where Username='"+login[0].substring(9)+"' and Password='"+login[1].substring(9)+"'"}));
+						socket.on("successpay"+index, function(tups)
+								{
+									socket.emit("query", JSON.stringify({"id":"buy"+index, "query":"insert into BUY_PET values ('"+login[0].substring(9)+"','"+login[1].substring(9)+"','"+id+"')"}));
+									//alert("Purchase successful!");
+									location.reload();
+								});
+								socket.on("failpay"+index, function(error)
+								{
+									alert("You need more money!");
+								});
+					};
+				})(i, tups[i].cost, tups[i].ID);
+			}
+			loadCos();
+		});
+	}
 </script>
 
 </body>
