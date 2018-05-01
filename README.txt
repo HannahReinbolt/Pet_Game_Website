@@ -27,4 +27,4 @@ If init.bat fails, here are the manual steps it performs:
 
 
 After init.bat has finished running it will leave 4 processes up: your default browser, a call to node.js ("LocalServer"), the mysql service ("mysql"), and the apache service ("apache").
-Just terminate those with the red X button whe you're finished.
+Just terminate those with the red X button when you're finished.

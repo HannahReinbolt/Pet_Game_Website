@@ -59,15 +59,15 @@ create table BUY_COS(
 create table PET(
 	ID       varchar(255),
 	name     varchar(255) not null default "pet_name",
-	cost     int not null default 0,
-	sprite   varchar(255), /* filepath to picture */
+	cost     int not null,
+	sprite   varchar(255) not null, /* filepath to picture */
 	primary key (ID));
 
 create table COSMETIC(
 	ID varchar(255),
 	name varchar(255),
 	cost int not null,
-	sprite varchar(255),
+	sprite varchar(255) not null,
 	primary key (ID));
 
 create table WEAR(
