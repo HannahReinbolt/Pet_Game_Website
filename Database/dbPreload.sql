@@ -21,19 +21,19 @@ insert into CUSTOMER values ('samiam', 'iamsam', 0);
 insert into BUY_PET values ('samiam','iamsam','014');
 
 insert into USER values ('bob','a','bob',null,null,null,100,'Sprites/potato.png');
-insert into USER2 values ('bob','a','1111111111',null);
+insert into USER2 values ('bob','a','1111111111','hi@nnothnaks.comm');
 insert into CUSTOMER values ('bob','a',0);
 insert into BUY_PET values ('bob','a','014');
 
 insert into USER values ('bad','b', 'i', 'am', 'bad', null, 666, 'Sprites/potato.png');
-insert into USER2 values ('bad', 'b', '6666666666',null);
+insert into USER2 values ('bad', 'b', '6666666667','emaill');
 insert into CUSTOMER values ('bad','b',2);
 insert into BAN values ('bad','b','2018-05-15');
 insert into BAN2 values ('bad','b','too bad >:C');
 insert into BUY_PET values ('bad','b', '014');
 
 insert into USER values ('morebad','bb', 'i', 'am', 'bad', null, 666, 'Sprites/potato.png');
-insert into USER2 values ('morebad', 'bb', '6666666666',null);
+insert into USER2 values ('morebad', 'bb', '6666666666','noemail');
 insert into CUSTOMER values ('morebad','bb',3);
 insert into BAN values ('morebad','bb','2100-05-15');
 insert into BAN2 values ('morebad','bb','too BAD!! >:C');
