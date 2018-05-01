@@ -70,20 +70,9 @@
     <script>
     var socket = io();
     var user = document.cookie.split("|");
-    var query = JSON.stringify({"id":"user","query":"select * from USER where Username='"+user[0].substring(9)+"' and Password='"+user[1].substring(9)+"'"});
-    
-    socket.emit("query", query);
-    socket.on("successuser", function(tups){
-      var nameitem = document.createAttribute("div");
-      nameitem.innerHTML(tups.name);
-			document.getElementById("profile_name").appendChild(nameitem);
-    });
-
-    socket.on("failuser", function(error)
-    {
-	    // Redirect to login_register
-	    window.location="http://localhost:8081/login_register.html";
-    });
+    var name = 
+    name.innerText = user[0].substring(9);
+    document.getElementById("profile_name").appendChild(name);
     </script>      
   </div>
   <p>Gaze at my supreme collection! Mwahahaaha!</p>
@@ -101,6 +90,7 @@
 		// Redirect to login_register
 		window.location="http://localhost:8081/login_register.html";
 	}
+
 	var user = document.cookie.split("|");
 	var query = JSON.stringify({"id":"user","query":"select Username from USER where Username='"+user[0].substring(9)+"' and Password='"+user[1].substring(9)+"'"});
 	socket.emit("query", query);
@@ -111,7 +101,7 @@
 	});
 	
 	var user = document.cookie.split("|");
-	socket.emit("query", JSON.stringify({"id":"pets", "query":"select * from PET as P where P.ID not in (select B.Pet_ID from BUY_PET as B where B.Username='"+user[0].substring(9)+"' and B.Password='"+user[1].substring(9)+"') order by cost asc"}));
+	socket.emit("query", JSON.stringify({"id":"pets", "query":"select * from PET as P where P.ID not in (select B.Pet_ID from BUY_PET as B where B.Username='"+user[0].substring(9)+"' and B.Password='"+user[1].substring(9)+"' order by cost asc"}));
 
 	socket.on("successpets", function(tups)
 	{
