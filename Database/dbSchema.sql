@@ -94,5 +94,5 @@ create table AWARD(
 	Password varchar(255), 
 	Name varchar(255) references ACHIEVEMENT.Name,
 	Pet_ID varchar(255) references ACHIEVEMENT.Pet_ID,
-	primary key (Username, Password, Name, Pet_ID))
-	foreign key (Username, Password) references USER (Username,Password) on delete cascade on update cascade;
+	primary key (Username, Password, Name, Pet_ID),
+	foreign key (Username, Password) references USER (Username,Password) on delete cascade on update cascade);
