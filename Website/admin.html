@@ -60,6 +60,7 @@
   </div><!-- /.container-fluid -->
 </nav>
 
+<div class="adminpage">
 <script src="/socket.io/socket.io.js"></script>
 <script>
 var socket = io();
@@ -80,11 +81,11 @@ var socket = io();
 	});
 </script>
 
-<div class="container-fluid">
+<div class="container-fluid backsplash">
   <div class="row content">
-    <div class="col-sm-9">
+    <div class="col-sm-9 centeredthing">
       <div class="well">
-        <h4>Admin Dashboard</h4>
+        <h2>Admin Dashboard</h2>
       </div>
 	  <div class="row">
 		  <div id="userBox" class="bawx"></div>
@@ -289,6 +290,7 @@ var socket = io();
 		});
 	}
 </script>
+</div> <!-- End body div -->
 
 </body>
 </html>

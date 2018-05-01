@@ -25,6 +25,10 @@ textarea{
     font-family: Cambria, Cochin, Georgia, Times, Times New Roman, serif;
 }
 
+.adminpage{
+    font-family: Cambria, Cochin, Georgia, Times, Times New Roman, serif;
+}
+
 canvas{
     text-shadow: 0 0 3px #000;
 }
@@ -55,6 +59,13 @@ canvas{
     color: #757575;
     border-radius: 8px;
  
+  }
+
+  .centeredthing{
+    width: 100%;
+    margin: 0 auto;
+    padding-left: auto;
+    padding-right: auto;
   }
 
 /*CHAT PAGE STYLES*/
