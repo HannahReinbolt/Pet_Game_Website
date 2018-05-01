@@ -119,7 +119,12 @@
 	});
 	
 	var user = document.cookie.split("|");
+<<<<<<< HEAD
 	socket.emit("query", JSON.stringify({"id":"pets", "query":"select * from PET as P and BUY_PET as BP where P.ID=BP.ID and BP.Username='"+user[0].substring(9)+"' and BP.Password='"+user[1].substring(9)+"') order by cost asc"}));
+=======
+	socket.emit("query", JSON.stringify({"id":"pets", "query":"select * from PET as P where P.ID not in (select B.Pet_ID from BUY_PET as B where B.Username='"+user[0].substring(9)+"' and B.Password='"+user[1].substring(9)+"') order by cost asc"}));
+
+>>>>>>> f98a11eb47f37705e92f5560c44d57734ed02ca5
 	socket.on("successpets", function(tups)
 	{
 		console.log(tups);
