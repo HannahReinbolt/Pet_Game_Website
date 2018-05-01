@@ -3,7 +3,7 @@ This file contains all the schemas for the relations in our database. Used to bu
 */
 
 create table USER(
-	Username varchar(255) unique,
+	Username varchar(255),
 	Password varchar(255),
 	Fname varchar(255),
 	Mname varchar(255),
@@ -15,45 +15,52 @@ create table USER(
 	
 create table USER2(
 	Username varchar(255),
+	Password varchar(255),
 	Phone char(10),
 	Email varchar(255),
-	primary key (Username,Phone,Email),
-	foreign key (Username) references USER (Username) on delete cascade);
+	primary key (Username,Password,Phone,Email),
+	foreign key (Username,Password) references USER (Username,Password) on delete cascade on update cascade);
 
 create table CUSTOMER(
 	Username varchar(255),
+	Password varchar(255),
 	Numstrikes int(3),
-	primary key (Username),
-	foreign key (Username) references USER (Username) on delete cascade);
+	primary key (Username,Password),
+	foreign key (Username,Password) references USER (Username,Password) on delete cascade on update cascade);
 	
 create table ADMIN(
 	Username varchar(255),
-	primary key (Username),
-	foreign key (Username) references USER (Username) on delete cascade);
+	Password varchar(255),
+	primary key (Username,Password),
+	foreign key (Username,Password) references USER (Username,Password) on delete cascade on update cascade);
 	
 create table BAN(
 	Username varchar(255),
+	Password varchar(255),
 	expiration_date date,
-	primary key (Username),
-	foreign key (Username) references USER (Username) on delete cascade);
+	primary key (Username,Password),
+	foreign key (Username,Password) references USER (Username,Password) on delete cascade on update cascade);
 	
 create table BAN2(
 	Username varchar(255),
+	Password varchar(255),
 	reason varchar(255),
-	primary key (Username, reason),
-	foreign key (Username) references USER (Username) on delete cascade);
+	primary key (Username,Password,reason),
+	foreign key (Username,Password) references USER (Username,Password) on delete cascade on update cascade);
 	
 create table BUY_PET(
 	Username varchar(255),
+	Password varchar(255),
 	Pet_ID   varchar(255) references PET.ID,
-	primary key (Username, Pet_ID),
-	foreign key (Username) references USER (Username) on delete cascade);
+	primary key (Username,Password,Pet_ID),
+	foreign key (Username,Password) references USER (Username,Password) on delete cascade on update cascade);
 	
 create table BUY_COS(
 	Username varchar(255),
+	Password varchar(255),
 	Cos_ID   varchar(255) references COSMETIC.ID,
-	primary key (Username, Cos_ID),
-	foreign key (Username) references USER (Username) on delete cascade);
+	primary key (Username,Password,Cos_ID),
+	foreign key (Username,Password) references USER (Username,Password) on delete cascade on update cascade);
 	
 create table PET(
 	ID       varchar(255),
@@ -71,9 +78,10 @@ create table COSMETIC(
 
 create table WEAR(
 	Username varchar(255),
+	Password varchar(255),
 	Cos_ID varchar(255) references COSMETIC.ID,
-	primary key (Username, Cos_ID),
-	foreign key (Username) references USER (Username) on delete cascade);
+	primary key (Username,Password,Cos_ID),
+	foreign key (Username,Password) references USER (Username,Password) on delete cascade on update cascade);
 
 create table ACHIEVEMENT(
 	Name varchar(255),

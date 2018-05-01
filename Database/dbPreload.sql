@@ -1,29 +1,22 @@
 /* This sql file loads in some default values into our database. Add yourself as admin */
 
 insert into USER values ('frodoHackins', 'toor', 'Frodo', null, 'Hackins', '1998-02-26', 999, 'Sprites/potato.png');
-insert into USER2 values ('frodoHackins', '5736664200', 'svgntc@mst.edu');
-insert into ADMIN values ('frodoHackins');
-insert into CUSTOMER values ('frodoHackins', 2);
-insert into BAN values ('frodoHackins', '9999-01-01');
-insert into BAN2 values ('frodoHackins', 'everything o_O');
-insert into BUY_PET values ('frodoHackins', '014');
+insert into USER2 values ('frodoHackins', 'toor', '5736664200', 'svgntc@mst.edu');
+insert into ADMIN values ('frodoHackins', 'toor');
+insert into CUSTOMER values ('frodoHackins', 'toor', 2);
+insert into BAN values ('frodoHackins', 'toor', '9999-01-01');
+insert into BAN2 values ('frodoHackins', 'toor', 'everything o_O');
+insert into BUY_PET values ('frodoHackins', 'toor', '014');
 
-<<<<<<< HEAD
-insert into USER values ('SirDalyn', 'StrongPassword', 'Sir', 'Gwen', 'Dalyn', '1996-07-28', 420, 'Sprites/potato.png');
-insert into USER2 values ('SirDalyn', '3141592653', 'gmw7x9@mst.edu');
-insert into ADMIN values ('SirDalyn');
-insert into CUSTOMER values ('SirDalyn', 0); 
-=======
 insert into USER values ('SirDalyn', 'StrongPassword', 'Sir', 'Gwen', 'Dalyn', '1996-07-28', 42000, 'Sprites/potato.png');
 insert into USER2 values ('SirDalyn', 'StrongPassword', '3141592653', 'gmw7x9@mst.edu');
 insert into ADMIN values ('SirDalyn', 'StrongPassword');
 insert into CUSTOMER values ('SirDalyn', 'StrongPassword', 0); 
->>>>>>> 8982ebfb4f83c2510894fd1ca1ed88d61555c538
 
 insert into USER values ('samiam', 'iamsam', 'sam', 'i', 'am', '1957-03-14', 998, 'Sprites/potato.png');
-insert into USER2 values ('samiam', '5555555555', 'hmrvg9@mst.edu');
-insert into ADMIN values ('samiam');
-insert into CUSTOMER values ('samiam', 0);
+insert into USER2 values ('samiam', 'iamsam', '5555555555', 'hmrvg9@mst.edu');
+insert into ADMIN values ('samiam', 'iamsam');
+insert into CUSTOMER values ('samiam', 'iamsam', 0);
 
 
 insert into PET values ('001', 'Kitty', 50, 'Sprites/kitty.png');
