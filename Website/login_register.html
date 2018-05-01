@@ -149,7 +149,7 @@
 			else
 			{
 				var valuesUser = "\'"+document.getElementById('signupU').value+"\',\'"+document.getElementById('signupP').value+"\',\'"+document.getElementById('signupF').value+"\',\'"+document.getElementById('signupM').value+"\',\'"+document.getElementById('signupL').value+"\',\'"+document.getElementById('signupB').value+"\',0,\'Sprites/potato.png\'";
-				var valuesUser2 = "'"+document.getElementById('signupU').value+"','"+document.getElementById('signupPh').value+"','"+document.getElementById('signupE').value+"'";
+				var valuesUser2 = "'"+document.getElementById('signupU').value+"','"+document.getElementById('signupP').value+"','"+document.getElementById('signupPh').value+"','"+document.getElementById('signupE').value+"'";
 				// Add information to user tables
 				socket.emit('query', JSON.stringify({"id":"signup", "query":"insert into USER values("+valuesUser+")"}));
 				socket.on('successsignup', function(tups)
@@ -157,7 +157,7 @@
 					socket.emit('query', JSON.stringify({"id":"signup2", "query":"insert into USER2 values("+valuesUser2+")"}));
 					socket.on('successsignup2', function(tups)
 					{						
-						socket.emit('query', JSON.stringify({"id":"firstpet", "query":"insert into BUY_PET values('"+document.getElementById('signupU').value+"','014')"}));
+						socket.emit('query', JSON.stringify({"id":"firstpet", "query":"insert into BUY_PET values('"+document.getElementById('signupU').value+"','"+document.getElementById('signupP').value+"','014')"}));
 						socket.on("successfirstpet", function(tups)
 						{
 							socket.emit("query", JSON.stringify({"id":"initstrike", "query":"insert into CUSTOMER values ('"+document.getElementById('signupU').value+"','"+document.getElementById('signupP').value+"',0)"}));
