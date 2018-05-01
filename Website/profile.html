@@ -138,6 +138,7 @@
 				};
 			})(i, tups[i].sprite);
 		}
+		tups.length = 0;
 		loadCos();
 		tups.length = 0;
 	});
@@ -196,8 +197,10 @@
 					};
 				})(i, tups[i].ID);
 			}
+			tups.length = 0;
 			// Load awards
 			loadAward();
+			tups.length = 0;
 		});
 		socket.on("failcosmetics", function(error)
 		{
@@ -220,7 +223,9 @@
 				item.innerHTML = "<div class=\"panel panel-primary\"><div class=\"panel-heading\">"+tups[i].Name+"</div></div></div>";
 				document.getElementById("achiv").appendChild(item);
 			}
+			tups.length = 0;
 			loadPic();
+			tups.length = 0;
 		});
 		socket.on("failachiv", function(error)
 		{
