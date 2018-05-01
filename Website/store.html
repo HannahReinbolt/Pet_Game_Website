@@ -106,7 +106,7 @@
 		window.location="http://localhost:8081/login_register.html";
 	});
 	
-	var user = document.cookie.split("|");
+	var login = document.cookie.split("|");
 	socket.emit("query", JSON.stringify({"id":"pets", "query":"select * from PET as P where P.ID not in (select B.Pet_ID from BUY_PET as B where B.Username='"+user[0].substring(9)+"'and B.Password='"+user[1].substring(9)+"') order by cost asc"}));
 	socket.on("successpets", function(tups)
 	{
@@ -143,8 +143,23 @@
 					socket.on("successpay"+index, function(tups)
 							{
 								socket.emit("query", JSON.stringify({"id":"buy"+index, "query":"insert into BUY_PET values ('"+login[0].substring(9)+"','"+login[1].substring(9)+"','"+id+"')"}));
-								//alert("Purchase successful!");
-								location.reload();
+								socket.on("successbuy"+index, function(tups)
+								{
+									// Check for related achievements
+									socket.emit("query", JSON.stringify({"id":"achieve", "query":"select Name,Pet_ID,reward from ACHIEVEMENT where Pet_ID='"+id+"'"}));
+									socket.on("successachieve", function(tups)
+									{
+										socket.emit("query", JSON.stringify({"id":"award", "query":"insert into AWARD values ('"+login[0].substring(9)+"','"+login[1].substring(9)+"','"+this.tups[0].Name+"','"+this.tups[0].Pet_ID+"')"}));
+										alert("Achievement awarded: "+this.tups[0].Name+"!");
+										socket.emit("query", JSON.stringify({"id":"mun", "query":"update USER set Money=Money+"+this.tups[0].reward+" where Username='"+login[0].substring(9)+"' and Password='"+login[1].substring(9)+"'"}));
+										alert("Awarded "+this.tups[0].reward+" coins!");
+										location.reload();
+									});
+									socket.on("failachieve", function(error)
+									{
+										location.reload();
+									});
+								});
 							});
 							socket.on("failpay"+index, function(error)
 							{
