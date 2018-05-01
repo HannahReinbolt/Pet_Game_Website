@@ -67,22 +67,15 @@
   </div>
 </div>
 
-<<<<<<< HEAD
-<div class="container">
-<p>Search for an item:</p>
-<div id="search" class="search-container">
-    <form action="">
-      <input type="text" placeholder="Search.." name="search">
-      <button id="searchbtn" type="button" class="btn"><i>find</i></button>
-=======
 <div class="container" style="padding-top: 2em;">
 <h4>Search for an item:</h4>
-<div class="search-container">
-	<!--needs to be a query instead of a form-->
+<div id="search" class="search-container">
     <form action="">
-      <input type="text" placeholder="Search.." name="search">
-      <button type="submit">find</button>
->>>>>>> 7b1b0cd5b28b3e155686f4df94321ea8a88e0786
+      <input id="searchin" type="text" placeholder="Search.." name="search">
+      <button id="searchbtn" type="button">find</button>
+	  <h3>Search Results<h3>
+	  <br>
+	  <div id="serch" class="row"></div>
     </form>
   </div>
 </div>
@@ -119,7 +112,196 @@
 	
 	document.getElementById("searchbtn").onclick = function()
 	{
-		
+		var str = document.getElementById("searchin").value;
+		var serchbox = document.getElementById("serch");
+		while(serchbox.firstChild)
+		{
+			serchbox.removeChild(serchbox.firstChild);
+		}
+		if(!document.getElementById("searchin").value)
+		{
+			return;
+		}
+		// Query for pets 
+		socket.emit("query", JSON.stringify({"id":"serch", "query":"select * from PET as P where P.name like '%"+str+"%' and P.ID no in (select B.Pet_ID from BUY_PET as B where B.Username='"+user[0].substring(9)+"'and B.Password='"+user[1].substring(9)+"') order by cost asc"}));
+		socket.on("successserch", function(tups)
+		{
+			// Add boxes with pets
+			for(var i = 0; i < tups.length; i ++)
+			{
+				var item = document.createElement("DIV");
+				item.setAttribute("id", "sitem"+i);
+				item.setAttribute("class", "col-sm-3");
+				item.innerHTML = "<div class=\"panel panel-primary\"><div class=\"panel-heading\">"+tups[i].name+"</div> <div class=\"panel-body\"><img src=\"http://localhost:8081/"+tups[i].sprite+"\" class=\"img-responsive\" style=\"width:100%\" alt=\"Image\"></div></div>";
+				// Create item window
+				//document.getElementById("window").innerHTML += item;
+				// Create buy button
+				var button = document.createElement("BUTTON");
+				button.setAttribute("id", "sbuy"+i);
+				button.setAttribute("type", "button");
+				button.setAttribute("class", "btn");
+				button.innerText = "Buy: $"+tups[i].cost;
+				 //<button id=\"buy"+i+"\" type=\"button\" class=\"btn\">Buy: $"+tups[i].cost+"</button> 
+				item.appendChild(button);
+				document.getElementById("serch").appendChild(item);
+			}
+			for(var i = 0; i < tups.length; i ++)
+			{
+				(function(index, cost, id)
+				{
+					document.getElementById("sbuy"+index).onclick = function()
+					{
+						console.log("click");
+						console.log(document.cookie);
+						var login = document.cookie.split("|");
+						console.log(login);
+						socket.emit("query", JSON.stringify({"id":"checkmun"+index, "query":"select Money from USER where Money>="+cost+" and Username='"+login[0].substring(9)+"' and Password='"+login[1].substring(9)+"'"}));
+						socket.on("successcheckmun"+index, function(tups)
+						{
+							socket.emit("query", JSON.stringify({"id":"pay"+index, "query":"update USER set Money=USER.Money-"+cost+" where Username='"+login[0].substring(9)+"' and Password='"+login[1].substring(9)+"'"}));
+							socket.on("successpay"+index, function(tups)
+							{
+								socket.emit("query", JSON.stringify({"id":"buy"+index, "query":"insert into BUY_PET values ('"+login[0].substring(9)+"','"+login[1].substring(9)+"','"+id+"')"}));
+								socket.on("successbuy"+index, function(tups)
+								{
+									// Check for related achievements
+									socket.emit("query", JSON.stringify({"id":"achieve", "query":"select Name,Pet_ID,reward from ACHIEVEMENT where Pet_ID='"+id+"'"}));
+									socket.on("successachieve", function(tups)
+									{
+										socket.emit("query", JSON.stringify({"id":"award", "query":"insert into AWARD values ('"+login[0].substring(9)+"','"+login[1].substring(9)+"','"+tups[0].Name+"','"+tups[0].Pet_ID+"')"}));
+										alert("Achievement awarded: "+tups[0].Name+"!");
+										socket.emit("query", JSON.stringify({"id":"mun", "query":"update USER set Money=Money+"+tups[0].reward+" where Username='"+login[0].substring(9)+"' and Password='"+login[1].substring(9)+"'"}));
+										alert("Awarded "+tups[0].reward+" coins!");
+										location.reload();
+									});
+									socket.on("failachieve", function(error)
+									{
+										location.reload();
+									});
+								});
+							});
+						});
+						socket.on("failcheckmun"+index, function(error)
+						{
+							alert("You need more money!");
+						});
+					};
+				})(i, tups[i].cost, tups[i].ID);
+			}
+			// Query for accessories
+			socket.emit("query", JSON.stringify({"id":"serch2", "query":"select * from COSMETIC where name like '%"+str+"%' and C.ID no in (select B.Cos_ID from BUY_COS as B where B.Username='"+user[0].substring(9)+"'and B.Password='"+user[1].substring(9)+"') order by cost asc"}));
+			socket.on("successserch2", function(tups)
+			{
+				// Add boxes with cosmetics
+				for(var i = 0; i < tups.length; i ++)
+				{
+					var item = document.createElement("DIV");
+					item.setAttribute("id", "sitemc"+i);
+					item.setAttribute("class", "col-sm-3");
+					item.innerHTML = "<div class=\"panel panel-primary\"><div class=\"panel-heading\">"+tups[i].name+"</div> <div class=\"panel-body\"><img src=\"http://localhost:8081/"+tups[i].sprite+"\" class=\"img-responsive\" style=\"width:100%\" alt=\"Image\"></div></div>";
+					// Create item window
+					//document.getElementById("window").innerHTML += item;
+					// Create buy button
+					var button = document.createElement("BUTTON");
+					button.setAttribute("id", "sbuyc"+i);
+					button.setAttribute("type", "button");
+					button.setAttribute("class", "btn");
+					button.innerText = "Buy: $"+tups[i].cost;
+					 //<button id=\"buy"+i+"\" type=\"button\" class=\"btn\">Buy: $"+tups[i].cost+"</button> 
+					item.appendChild(button);
+					document.getElementById("serch").appendChild(item);
+				}
+				for(var i = 0; i < tups.length; i ++)
+				{
+					(function(index, cost, id)
+					{
+						document.getElementById("sbuyc"+index).onclick = function()
+						{
+							console.log("click");
+							console.log(document.cookie);
+							var login = document.cookie.split("|");
+							console.log(login);
+							socket.emit("query", JSON.stringify({"id":"checkmunc"+index, "query":"select Money from USER where Money>="+cost+" and Username='"+login[0].substring(9)+"' and Password='"+login[1].substring(9)+"'"}));
+							socket.on("successcheckmunc"+index, function(tups)
+							{
+								socket.emit("query", JSON.stringify({"id":"payc"+index, "query":"update USER set Money=USER.Money-"+cost+" where Username='"+login[0].substring(9)+"' and Password='"+login[1].substring(9)+"'"}));
+								socket.on("successpayc"+index, function(tups)
+								{
+									socket.emit("query", JSON.stringify({"id":"buyc"+index, "query":"insert into BUY_COS values ('"+login[0].substring(9)+"','"+login[1].substring(9)+"','"+id+"')"}));
+									//alert("Purchase successful!");
+									location.reload();
+								});
+							});
+							socket.on("failcheckmunc"+index, function(error)
+							{
+								alert("You need more money!");
+							});
+						};
+					})(i, tups[i].cost, tups[i].ID);
+				}
+			});
+			
+		});
+		socket.on("failserch", function(error)
+		{
+			// Query for accessories
+			socket.emit("query", JSON.stringify({"id":"serch2", "query":"select * from COSMETIC where name like '%"+str+"%' and C.ID no in (select B.Cos_ID from BUY_COS as B where B.Username='"+user[0].substring(9)+"'and B.Password='"+user[1].substring(9)+"') order by cost asc"}));
+			socket.on("successserch2", function(tups)
+			{
+				// Add boxes with cosmetics
+				for(var i = 0; i < tups.length; i ++)
+				{
+					var item = document.createElement("DIV");
+					item.setAttribute("id", "sitemc"+i);
+					item.setAttribute("class", "col-sm-3");
+					item.innerHTML = "<div class=\"panel panel-primary\"><div class=\"panel-heading\">"+tups[i].name+"</div> <div class=\"panel-body\"><img src=\"http://localhost:8081/"+tups[i].sprite+"\" class=\"img-responsive\" style=\"width:100%\" alt=\"Image\"></div></div>";
+					// Create item window
+					//document.getElementById("window").innerHTML += item;
+					// Create buy button
+					var button = document.createElement("BUTTON");
+					button.setAttribute("id", "sbuyc"+i);
+					button.setAttribute("type", "button");
+					button.setAttribute("class", "btn");
+					button.innerText = "Buy: $"+tups[i].cost;
+					 //<button id=\"buy"+i+"\" type=\"button\" class=\"btn\">Buy: $"+tups[i].cost+"</button> 
+					item.appendChild(button);
+					document.getElementById("serch").appendChild(item);
+				}
+				for(var i = 0; i < tups.length; i ++)
+				{
+					(function(index, cost, id)
+					{
+						document.getElementById("sbuyc"+index).onclick = function()
+						{
+							console.log("click");
+							console.log(document.cookie);
+							var login = document.cookie.split("|");
+							console.log(login);
+							socket.emit("query", JSON.stringify({"id":"checkmunc"+index, "query":"select Money from USER where Money>="+cost+" and Username='"+login[0].substring(9)+"' and Password='"+login[1].substring(9)+"'"}));
+							socket.on("successcheckmunc"+index, function(tups)
+							{
+								socket.emit("query", JSON.stringify({"id":"payc"+index, "query":"update USER set Money=USER.Money-"+cost+" where Username='"+login[0].substring(9)+"' and Password='"+login[1].substring(9)+"'"}));
+								socket.on("successpayc"+index, function(tups)
+								{
+									socket.emit("query", JSON.stringify({"id":"buyc"+index, "query":"insert into BUY_COS values ('"+login[0].substring(9)+"','"+login[1].substring(9)+"','"+id+"')"}));
+									//alert("Purchase successful!");
+									location.reload();
+								});
+							});
+							socket.on("failcheckmunc"+index, function(error)
+							{
+								alert("You need more money!");
+							});
+						};
+					})(i, tups[i].cost, tups[i].ID);
+				}
+			});
+			socket.on("failserch2", function(error)
+			{
+				// Didn't find anything lol
+				document.getElementById("serch").innerText = "No matches...";
+			});
+		});
 	};
 	
 	socket.emit("query", JSON.stringify({"id":"pets", "query":"select * from PET as P where P.ID not in (select B.Pet_ID from BUY_PET as B where B.Username='"+user[0].substring(9)+"'and B.Password='"+user[1].substring(9)+"') order by cost asc"}));
@@ -155,7 +337,7 @@
 					var login = document.cookie.split("|");
 					console.log(login);
 					socket.emit("query", JSON.stringify({"id":"checkmun"+index, "query":"select Money from USER where Money>="+cost+" and Username='"+login[0].substring(9)+"' and Password='"+login[1].substring(9)+"'"}));
-					socket.on("successcheckmun", function(tups)
+					socket.on("successcheckmun"+index, function(tups)
 					{
 						socket.emit("query", JSON.stringify({"id":"pay"+index, "query":"update USER set Money=USER.Money-"+cost+" where Username='"+login[0].substring(9)+"' and Password='"+login[1].substring(9)+"'"}));
 						socket.on("successpay"+index, function(tups)
@@ -230,17 +412,21 @@
 						console.log(document.cookie);
 						var login = document.cookie.split("|");
 						console.log(login);
-						socket.emit("query", JSON.stringify({"id":"payc"+index, "query":"update USER set Money=USER.Money-"+cost+" where Username='"+login[0].substring(9)+"' and Password='"+login[1].substring(9)+"'"}));
-						socket.on("successpayc"+index, function(tups)
-								{
-									socket.emit("query", JSON.stringify({"id":"buyc"+index, "query":"insert into BUY_COS values ('"+login[0].substring(9)+"','"+login[1].substring(9)+"','"+id+"')"}));
-									//alert("Purchase successful!");
-									location.reload();
-								});
-								socket.on("failpayc"+index, function(error)
-								{
-									alert("You need more money!");
-								});
+						socket.emit("query", JSON.stringify({"id":"checkmunc"+index, "query":"select Money from USER where Money>="+cost+" and Username='"+login[0].substring(9)+"' and Password='"+login[1].substring(9)+"'"}));
+						socket.on("successcheckmunc"+index, function(tups)
+						{
+							socket.emit("query", JSON.stringify({"id":"payc"+index, "query":"update USER set Money=USER.Money-"+cost+" where Username='"+login[0].substring(9)+"' and Password='"+login[1].substring(9)+"'"}));
+							socket.on("successpayc"+index, function(tups)
+							{
+								socket.emit("query", JSON.stringify({"id":"buyc"+index, "query":"insert into BUY_COS values ('"+login[0].substring(9)+"','"+login[1].substring(9)+"','"+id+"')"}));
+								//alert("Purchase successful!");
+								location.reload();
+							});
+						});
+						socket.on("failcheckmunc"+index, function(error)
+						{
+							alert("You need more money!");
+						});
 					};
 				})(i, tups[i].cost, tups[i].ID);
 			}
