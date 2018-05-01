@@ -61,9 +61,10 @@
 </nav>
 
 <div class="jumbotron" style="background-color: lightgrey">
-  <div class="container text-center" style="border-radius: 20px;">
+  <div id="top" class="container text-center" style="border-radius: 20px;">
     <h1>Pet & Accessory Store</h1>
     <p>Bringing the cutest pets to you.</p>
+	
   </div>
 </div>
 
@@ -107,9 +108,18 @@
 		// Redirect to login_register
 		window.location="http://localhost:8081/login_register.html";
 	});
+	socket.on("successuser", function(tups)
+	{
+		socket.emit("query", JSON.stringify({"id":"findmun", "query":"select Money from USER where Username='"+user[0].substring(9)+"' and Password='"+user[1].substring(9)+"'"}));
+		socket.on("successfindmun", function(tups)
+		{
+			document.getElementById("top").innerHTML += "<p>Funds: $"+tups[0].Money+"</p>";
+		});		
+		tups.length = 0;
+	});
 	
 	var login = document.cookie.split("|");
-	
+
 	document.getElementById("searchbtn").onclick = function()
 	{
 		var str = document.getElementById("searchin").value;
@@ -123,7 +133,7 @@
 			return;
 		}
 		// Query for pets 
-		socket.emit("query", JSON.stringify({"id":"serch", "query":"select * from PET as P where P.name like '%"+str+"%' and P.ID no in (select B.Pet_ID from BUY_PET as B where B.Username='"+user[0].substring(9)+"'and B.Password='"+user[1].substring(9)+"') order by cost asc"}));
+		socket.emit("query", JSON.stringify({"id":"serch", "query":"select * from PET as P where P.name like '%"+str+"%' and P.ID not in (select B.Pet_ID from BUY_PET as B where B.Username='"+user[0].substring(9)+"'and B.Password='"+user[1].substring(9)+"') order by cost asc"}));
 		socket.on("successserch", function(tups)
 		{
 			// Add boxes with pets
@@ -189,7 +199,7 @@
 				})(i, tups[i].cost, tups[i].ID);
 			}
 			// Query for accessories
-			socket.emit("query", JSON.stringify({"id":"serch2", "query":"select * from COSMETIC where name like '%"+str+"%' and C.ID no in (select B.Cos_ID from BUY_COS as B where B.Username='"+user[0].substring(9)+"'and B.Password='"+user[1].substring(9)+"') order by cost asc"}));
+			socket.emit("query", JSON.stringify({"id":"serch2", "query":"select * from COSMETIC as C where C.name like '%"+str+"%' and C.ID not in (select B.Cos_ID from BUY_COS as B where B.Username='"+user[0].substring(9)+"'and B.Password='"+user[1].substring(9)+"') order by cost asc"}));
 			socket.on("successserch2", function(tups)
 			{
 				// Add boxes with cosmetics
@@ -240,12 +250,12 @@
 					})(i, tups[i].cost, tups[i].ID);
 				}
 			});
-			
+			tups.length = 0;
 		});
 		socket.on("failserch", function(error)
 		{
 			// Query for accessories
-			socket.emit("query", JSON.stringify({"id":"serch2", "query":"select * from COSMETIC where name like '%"+str+"%' and C.ID no in (select B.Cos_ID from BUY_COS as B where B.Username='"+user[0].substring(9)+"'and B.Password='"+user[1].substring(9)+"') order by cost asc"}));
+			socket.emit("query", JSON.stringify({"id":"serch2", "query":"select * from COSMETIC as C where C.name like '%"+str+"%' and C.ID not in (select B.Cos_ID from BUY_COS as B where B.Username='"+user[0].substring(9)+"'and B.Password='"+user[1].substring(9)+"') order by cost asc"}));
 			socket.on("successserch2", function(tups)
 			{
 				// Add boxes with cosmetics
@@ -370,6 +380,7 @@
 			})(i, tups[i].cost, tups[i].ID);
 		}
 		loadCos();
+		tups.length = 0;
 	});
 	socket.on("failpets", function(error)
 	{

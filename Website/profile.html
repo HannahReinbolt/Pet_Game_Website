@@ -139,6 +139,7 @@
 			})(i, tups[i].sprite);
 		}
 		loadCos();
+		tups.length = 0;
 	});
 	socket.on("failpets", function(error)
 	{
