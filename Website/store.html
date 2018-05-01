@@ -60,29 +60,39 @@
   </div><!-- /.container-fluid -->
 </nav>
 
-<div class="jumbotron">
-  <div class="container text-center">
+<div class="jumbotron" style="background-color: lightgrey">
+  <div class="container text-center" style="border-radius: 20px;">
     <h1>Pet & Accessory Store</h1>
     <p>Bringing the cutest pets to you.</p>
   </div>
 </div>
 
+<<<<<<< HEAD
 <div class="container">
 <p>Search for an item:</p>
 <div id="search" class="search-container">
     <form action="">
       <input type="text" placeholder="Search.." name="search">
       <button id="searchbtn" type="button" class="btn"><i>find</i></button>
+=======
+<div class="container" style="padding-top: 2em;">
+<h4>Search for an item:</h4>
+<div class="search-container">
+	<!--needs to be a query instead of a form-->
+    <form action="">
+      <input type="text" placeholder="Search.." name="search">
+      <button type="submit">find</button>
+>>>>>>> 7b1b0cd5b28b3e155686f4df94321ea8a88e0786
     </form>
   </div>
 </div>
 
 <div id="window" class="container">
-<p>Pets</p>
+<h3>Pets</h3>
 <br>
 <div id="pets" class="row"></div>
 <br>
-<p>Accessories</p>
+<h3>Accessories</h3>
 <br>
 <div id="cos" class="row"></div>
 </div><br>
@@ -120,7 +130,7 @@
 		{
 			var item = document.createElement("DIV");
 			item.setAttribute("id", "item"+i);
-			item.setAttribute("class", "col-sm-4");
+			item.setAttribute("class", "col-sm-3");
 			item.innerHTML = "<div class=\"panel panel-primary\"><div class=\"panel-heading\">"+tups[i].name+"</div> <div class=\"panel-body\"><img src=\"http://localhost:8081/"+tups[i].sprite+"\" class=\"img-responsive\" style=\"width:100%\" alt=\"Image\"></div></div>";
 			// Create item window
 			//document.getElementById("window").innerHTML += item;
@@ -196,7 +206,7 @@
 			{
 				var item = document.createElement("DIV");
 				item.setAttribute("id", "itemc"+i);
-				item.setAttribute("class", "col-sm-4");
+				item.setAttribute("class", "col-sm-3");
 				item.innerHTML = "<div class=\"panel panel-primary\"><div class=\"panel-heading\">"+tups[i].name+"</div> <div class=\"panel-body\"><img src=\"http://localhost:8081/"+tups[i].sprite+"\" class=\"img-responsive\" style=\"width:100%\" alt=\"Image\"></div></div>";
 				// Create item window
 				//document.getElementById("window").innerHTML += item;

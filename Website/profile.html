@@ -60,7 +60,7 @@
   </div><!-- /.container-fluid -->
 </nav>
 
-<div class="backsplash">
+<div class="backsplash" style="background-color: lightgrey">
   <div class="profile_pic">
     <img id="profilepic" src="https://placehold.it/150x80?text=IMAGE" class="img-responsive" alt="Image">
   </div>
@@ -74,14 +74,14 @@
 </div>
   
 <div id="window" class="container">
-<p>Pets</p>
+<h3>Pets</h3>
 <br>
 <div id="pets" class="bawx"></div>
 <br>
-<p>Accessories</p>
+<h3>Accessories</h3>
 <br>
 <div id="cos" class="bawx"></div>
-<p>Achievemens</p>
+<h3>Achievemens</h3>
 <br>
 <div id="achiv" class="bawx"></div>
 </div><br>
@@ -155,7 +155,7 @@
 			{
 				var item = document.createElement("DIV");
 				item.setAttribute("id", "itemc"+i);
-				item.setAttribute("class", "col-sm-4");
+				item.setAttribute("class", "col-sm-3");
 				item.innerHTML = "<div class=\"panel panel-primary\"><div class=\"panel-heading\">"+tups[i].name+"</div> <div class=\"panel-body\"><img src=\"http://localhost:8081/"+tups[i].sprite+"\" class=\"img-responsive\" style=\"width:100%\" alt=\"Image\"></div></div>";
 				
 				// Create buy button

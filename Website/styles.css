@@ -99,16 +99,15 @@ canvas{
     text-align: center;
     background-color: white;
     opacity: 0.9;
-    border-radius: 30px;
     padding-bottom: 2em;
     padding-top: 2em;
+
 }
 
 .main-play-button{
     width: 30%;
     height: 4em;
-    opacity: 0.7;
-    background-color: papayawhip;
+    background-color: indianred;
     color: black;
     padding-top: 10px;
     margin: 0 auto;
@@ -136,15 +135,9 @@ canvas{
 }
 .profile_pic{
     display: inline-block;
-    width: 300px;
-    height: 50px;
-    margin: 1em;
 }
 .profile_name{
     display: inline-block;
-    width: 60%;
-    height: 20px;
-    margin: 1em;
     font-size: 3em;
 }
 
