@@ -61,26 +61,9 @@
 </nav>
 
 <div class="backsplash">
-  <div class="profile_pic" id="profilepic">
-    <img src="https://placehold.it/150x80?text=IMAGE" class="img-responsive" alt="Image">
-    <script src="/socket.io/socket.io.js"></script>
-			<script>
-			var socket = io();
-
-				var user = document.cookie.split("|");
-				var query = JSON.stringify({"id":"user","query":"select Username from USER where Username='"+user[0].substring(9)+"' and Password='"+user[1].substring(9)+"'"});
-				socket.emit("query", query);
-				socket.on("failuser", function(error)
-				{
-					// Redirect to login_register
-					window.location="http://localhost:8081/login_register.html";
-				});
-				socket.on("successuser", function(things){
-						
-				});
-	</script>
+  <div class="profile_pic">
+    <img id="profilepic" src="https://placehold.it/150x80?text=IMAGE" class="img-responsive" alt="Image">
   </div>
-
   <div class="profile_name" id="profile_name">
     <script>
       var user = document.cookie.split("|");
@@ -93,11 +76,14 @@
 <div id="window" class="container">
 <p>Pets</p>
 <br>
-<div id="pets" class="row"></div>
+<div id="pets" class="bawx"></div>
 <br>
 <p>Accessories</p>
 <br>
-<div id="cos" class="row"></div>
+<div id="cos" class="bawx"></div>
+<p>Achievemens</p>
+<br>
+<div id="achiv" class="bawx"></div>
 </div><br>
 
 <script src="/socket.io/socket.io.js"></script>
@@ -118,9 +104,7 @@
 		window.location="http://localhost:8081/login_register.html";
 	});
 	
-	var user = document.cookie.split("|");
-	socket.emit("query", JSON.stringify({"id":"pets", "query":"select * from PET as P where P.ID not in (select B.Pet_ID from BUY_PET as B where B.Username='"+user[0].substring(9)+"'and B.Password='"+user[1].substring(9)+"') order by cost asc"}));
-
+	socket.emit("query", JSON.stringify({"id":"pets", "query":"select P.name, P.sprite from PET as P, BUY_PET as B where P.ID=B.Pet_ID and B.Username='"+user[0].substring(9)+"' and B.Password='"+user[1].substring(9)+"'"}));
 	socket.on("successpets", function(tups)
 	{
 		console.log(tups);
@@ -130,41 +114,29 @@
 			item.setAttribute("id", "item"+i);
 			item.setAttribute("class", "col-sm-4");
 			item.innerHTML = "<div class=\"panel panel-primary\"><div class=\"panel-heading\">"+tups[i].name+"</div> <div class=\"panel-body\"><img src=\"http://localhost:8081/"+tups[i].sprite+"\" class=\"img-responsive\" style=\"width:100%\" alt=\"Image\"></div></div>";
-			// Create item window
-			//document.getElementById("window").innerHTML += item;
-			// Create buy button
+			
 			var button = document.createElement("BUTTON");
-			button.setAttribute("id", "buy"+i);
+			button.setAttribute("id", "equip"+i);
 			button.setAttribute("type", "button");
 			button.setAttribute("class", "btn");
-			button.innerText = "Buy: $"+tups[i].cost;
- 			 //<button id=\"buy"+i+"\" type=\"button\" class=\"btn\">Buy: $"+tups[i].cost+"</button> 
+			button.innerText = "Equip";
 			item.appendChild(button);
 			document.getElementById("pets").appendChild(item);
 		}
 		for(var i = 0; i < tups.length; i ++)
 		{
-			(function(index, cost, id)
+			(function(index, sprite)
 			{
-				document.getElementById("buy"+index).onclick = function()
+				document.getElementById("equip"+index).onclick = function()
 				{
 					console.log("click");
-					console.log(document.cookie);
-					var login = document.cookie.split("|");
-					console.log(login);
-					socket.emit("query", JSON.stringify({"id":"pay"+index, "query":"update USER set Money=USER.Money-"+cost+" where Username='"+login[0].substring(9)+"' and Password='"+login[1].substring(9)+"'"}));
-					socket.on("successpay"+index, function(tups)
-							{
-								socket.emit("query", JSON.stringify({"id":"buy"+index, "query":"insert into BUY_PET values ('"+login[0].substring(9)+"','"+login[1].substring(9)+"','"+id+"')"}));
-								//alert("Purchase successful!");
-								location.reload();
-							});
-							socket.on("failpay"+index, function(error)
-							{
-								alert("You need more money!");
-							});
+					socket.emit("query", JSON.stringify({"id":"equip"+index, "query":"update USER set Picture='"+sprite+"' where Username='"+user[0].substring(9)+"' and Password='"+user[1].substring(9)+"'"}));
+					socket.on("successequip"+index, function()
+					{
+						location.reload();
+					});
 				};
-			})(i, tups[i].cost, tups[i].ID);
+			})(i, tups[i].sprite);
 		}
 		loadCos();
 	});
@@ -174,11 +146,9 @@
 	});
 	
 	//cosmetics
-	//var user = document.cookie.split("|");
 	function loadCos()
 	{
-		socket.emit("query", JSON.stringify({"id":"cosmetics", "query":"select * from COSMETIC as C where C.ID in (select B.Cos_ID from BUY_COS as B where B.Username='"+user[0].substring(9)+"' and B.Password='"+user[1].substring(9)+"') order by cost asc"}));
-
+		socket.emit("query", JSON.stringify({"id":"cosmetics", "query":"select * from COSMETIC as C, BUY_COS as B where C.ID=B.Cos_ID and B.Username='"+user[0].substring(9)+"' and B.Password='"+user[1].substring(9)+"'"}));
 		socket.on("successcosmetics", function(tups)
 		{
 			for(var i = 0; i < tups.length; i ++)
@@ -187,46 +157,83 @@
 				item.setAttribute("id", "itemc"+i);
 				item.setAttribute("class", "col-sm-4");
 				item.innerHTML = "<div class=\"panel panel-primary\"><div class=\"panel-heading\">"+tups[i].name+"</div> <div class=\"panel-body\"><img src=\"http://localhost:8081/"+tups[i].sprite+"\" class=\"img-responsive\" style=\"width:100%\" alt=\"Image\"></div></div>";
-				// Create item window
-				//document.getElementById("window").innerHTML += item;
+				
 				// Create buy button
 				var button = document.createElement("BUTTON");
-				button.setAttribute("id", "buyc"+i);
+				button.setAttribute("id", "equipc"+i);
 				button.setAttribute("type", "button");
 				button.setAttribute("class", "btn");
-				button.innerText = "Buy: $"+tups[i].cost;
-				 //<button id=\"buy"+i+"\" type=\"button\" class=\"btn\">Buy: $"+tups[i].cost+"</button> 
+				button.innerText = "Equip";
 				item.appendChild(button);
 				document.getElementById("cos").appendChild(item);
 			}
 			for(var i = 0; i < tups.length; i ++)
 			{
-				(function(index, cost, id)
+				(function(index, id)
 				{
-					document.getElementById("buyc"+index).onclick = function()
+					document.getElementById("equipc"+index).onclick = function()
 					{
 						console.log("click");
-						console.log(document.cookie);
-						var login = document.cookie.split("|");
-						console.log(login);
-						socket.emit("query", JSON.stringify({"id":"payc"+index, "query":"update USER set Money=USER.Money-"+cost+" where Username='"+login[0].substring(9)+"' and Password='"+login[1].substring(9)+"'"}));
-						socket.on("successpayc"+index, function(tups)
-								{
-									socket.emit("query", JSON.stringify({"id":"buyc"+index, "query":"insert into BUY_COS values ('"+login[0].substring(9)+"','"+login[1].substring(9)+"','"+id+"')"}));
-									//alert("Purchase successful!");
-									location.reload();
-								});
-								socket.on("failpayc"+index, function(error)
-								{
-									alert("You need more money!");
-								});
+						socket.emit("query", JSON.stringify({"id":"equipc"+index, "query":"insert into WEAR values('"+user[0].substring(9)+"', '"+user[1].substring(9)+"', '"+id+"')"}));						
+						socket.on("failequipc"+index, function(error)
+						{
+							// Guess user hasn't equipped any cosmetics yet
+							socket.emit("query", JSON.stringify({"id":"equip2", "query":"update WEAR set Cos_ID="+id+" where Username='"+user[0].substring(9)+"' and Password='"+user[1].substring(9)+"'"}));
+							socket.on("successequip2", function(tups)
+							{
+								alert("Accessory equipped!");
+							});
+							socket.on("failequip2", function(error)
+							{
+								alert("Failed to equip! D:");
+							});
+						});
+						socket.on("successequipc"+index, function(tups)
+						{
+							alert("Accessory equipped!");
+						});
 					};
-				})(i, tups[i].cost, tups[i].ID);
+				})(i, tups[i].ID);
 			}
+			// Load awards
+			loadAward();
 		});
 		socket.on("failcosmetics", function(error)
 		{
-			alert("Database has failed UwU");
+			document.getElementById("cos").innerText = "None yet...";
+			// Load awards
+			loadAward();
+		});
+	}
+	
+	function loadAward()
+	{
+		socket.emit("query", JSON.stringify({"id":"achiv", "query":"select Name from AWARD where Username='"+user[0].substring(9)+"' and Password='"+user[1].substring(9)+"'"}));
+		socket.on("successachiv", function(tups)
+		{
+			for(var i = 0; i < tups.length; i ++)
+			{
+				var item = document.createElement("DIV");
+				item.setAttribute("id", "award"+i);
+				item.setAttribute("class", "col-sm-4");
+				item.innerHTML = "<div class=\"panel panel-primary\"><div class=\"panel-heading\">"+tups[i].Name+"</div></div></div>";
+				document.getElementById("achiv").appendChild(item);
+			}
+			loadPic();
+		});
+		socket.on("failachiv", function(error)
+		{
+			document.getElementById("achiv").innerText = "None yet...";		
+			loadPic();
+		});
+	}
+	
+	function loadPic()
+	{
+		socket.emit("query", JSON.stringify({"id":"pic", "query":"select Picture from USER where Username='"+user[0].substring(9)+"' and Password='"+user[1].substring(9)+"'"}));
+		socket.on("successpic",function(tups)
+		{
+			document.getElementById("profilepic").setAttribute("src", "http://localhost:8081/"+tups[0].Picture);
 		});
 	}
 </script>
