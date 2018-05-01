@@ -69,11 +69,10 @@
 
 <div class="container">
 <p>Search for an item:</p>
-<div class="search-container">
-	<!--needs to be a query instead of a form-->
+<div id="search" class="search-container">
     <form action="">
       <input type="text" placeholder="Search.." name="search">
-      <button type="submit"><i>find</i></button>
+      <button id="searchbtn" type="button" class="btn"><i>find</i></button>
     </form>
   </div>
 </div>
@@ -107,6 +106,12 @@
 	});
 	
 	var login = document.cookie.split("|");
+	
+	document.getElementById("searchbtn").onclick = function()
+	{
+		
+	};
+	
 	socket.emit("query", JSON.stringify({"id":"pets", "query":"select * from PET as P where P.ID not in (select B.Pet_ID from BUY_PET as B where B.Username='"+user[0].substring(9)+"'and B.Password='"+user[1].substring(9)+"') order by cost asc"}));
 	socket.on("successpets", function(tups)
 	{
